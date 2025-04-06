@@ -1,4 +1,6 @@
 extends CharacterBody2D
+
+const EXPLOSION_SCENE = preload("res://Explosion.tscn")
 @export var max_speed = 200 ##Max top speed
 @export var rotation_speed = 0.2 ## How quickly it turns
 @export var rtc_speed = .05 ##How quickly it returns to going straight
@@ -6,7 +8,11 @@ extends CharacterBody2D
 @export var accel = 10 ##How Quickly it accellerates
 @export var drag = 5 ##How quickly the ship decelerates
 
+@onready var health_bar = get_node("/root/Asteroided/HealthUI/HealthBar")
 @onready var bullet_scene = preload("res://Bullet.tscn")
+
+@export var max_health: int = 100
+var health: int = max_health
 
 var speed = 0
 var screenSize
@@ -58,6 +64,8 @@ func _physics_process(delta):
 
 
 func _process(delta):
+	while(health > 1):
+		health -= 1
 	if Input.is_action_pressed("shoot"):
 		shooting = true
 	else:
@@ -68,6 +76,13 @@ func _process(delta):
 		if shoot_timer <= 0:
 			shoot()
 			shoot_timer = 1.0 / fire_rate
+			
+	if health < max_health:
+		var damage_level = 1.0 - float(health) / float(max_health)  # Determines severity
+		if randf() < damage_level * delta * 3:  # Adjust spawn rate based on health
+			spawn_damage_effect()
+	health_bar.value = float(health) / float(max_health) * 100
+
 
 func shoot():
 	var bullet = bullet_scene.instantiate()
@@ -81,3 +96,12 @@ func shoot():
 	bullet.rotation = rotation
 	
 	get_parent().add_child(bullet) # Add bullet to the scene
+	
+func spawn_damage_effect():
+	var explosion = EXPLOSION_SCENE.instantiate()
+	
+	# Randomize position and scale
+	explosion.global_position = global_position + Vector2(randf_range(-20, 20), randf_range(-20, 20))
+	explosion.scale *= randf_range(0.5, 1.5)  # Random scale between 0.5x and 1.5x
+	
+	get_parent().add_child(explosion)

@@ -1,7 +1,7 @@
 [gd_scene load_steps=15 format=3 uid="uid://b4g47bbkfe04h"]
 
 [ext_resource type="Texture2D" uid="uid://bxmiv8mt6ryop" path="res://New Piskel (1).png" id="2_7w1oy"]
-[ext_resource type="Script" path="res://character_body_2d.gd" id="4_iy0y4"]
+[ext_resource type="Script" uid="uid://drw48skg1xtw5" path="res://character_body_2d.gd" id="4_iy0y4"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_hdep2"]
 atlas = ExtResource("2_7w1oy")
@@ -20,7 +20,6 @@ atlas = ExtResource("2_7w1oy")
 region = Rect2(32, 32, 32, 32)
 
 [sub_resource type="CompressedTexture2D" id="CompressedTexture2D_mektt"]
-load_path = "res://.godot/imported/New Piskel.png-4b57200a9b5d4d6f89cce1bdbbdb2eec.ctex"
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_s58na"]
 atlas = SubResource("CompressedTexture2D_mektt")

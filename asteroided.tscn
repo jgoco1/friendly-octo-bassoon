@@ -1,19 +1,42 @@
-[gd_scene load_steps=4 format=3 uid="uid://eytmojdi7oen"]
+[gd_scene load_steps=5 format=3 uid="uid://eytmojdi7oen"]
 
-[ext_resource type="Script" path="res://character_body_2d.gd" id="1_06s84"]
+[ext_resource type="Script" uid="uid://cg2wjn7mnd5fb" path="res://asteroided.gd" id="1_mcuy4"]
+[ext_resource type="Script" uid="uid://d1vupq78shn54" path="res://Player.gd" id="2_mcuy4"]
 [ext_resource type="SpriteFrames" uid="uid://dm78p44ghn41p" path="res://asteroided.tres" id="2_qhjnf"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_n5ew4"]
 
 [node name="Asteroided" type="Node2D"]
-position = Vector2(715, 453)
+script = ExtResource("1_mcuy4")
 
-[node name="CharacterBody2D" type="CharacterBody2D" parent="."]
-script = ExtResource("1_06s84")
+[node name="Player" type="CharacterBody2D" parent="."]
+position = Vector2(951, 529)
+script = ExtResource("2_mcuy4")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="CharacterBody2D"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Player"]
 scale = Vector2(1.5, 1.5)
 shape = SubResource("RectangleShape2D_n5ew4")
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="CharacterBody2D"]
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="Player"]
+scale = Vector2(2, 2)
 sprite_frames = ExtResource("2_qhjnf")
+animation = &"Med_Bank"
+
+[node name="HealthUI" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 25.0
+offset_top = 1003.0
+offset_right = 65.0
+offset_bottom = 1043.0
+grow_vertical = 0
+
+[node name="HealthBar" type="TextureProgressBar" parent="HealthUI"]
+modulate = Color(0.172487, 0.344433, 0.207777, 1)
+layout_mode = 0
+offset_left = 3.0
+offset_top = 1040.0
+offset_right = 103.0
+offset_bottom = 1140.0

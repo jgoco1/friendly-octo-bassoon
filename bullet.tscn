@@ -1,0 +1,40 @@
+[gd_scene load_steps=6 format=3 uid="uid://uyl5ea2k0uu5"]
+
+[ext_resource type="Script" uid="uid://c5g1cmnnl72js" path="res://Bullet.gd" id="1_v7oki"]
+[ext_resource type="PackedScene" uid="uid://078mudmiwvtt" path="res://Explosion.tscn" id="2_t4vbm"]
+[ext_resource type="Texture2D" uid="uid://b5a3rk4evs8k3" path="res://14.png" id="2_v8qja"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_t4vbm"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_v8qja")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}, {
+"frames": [],
+"loop": true,
+"name": &"new_animation",
+"speed": 5.0
+}]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_2b2rl"]
+size = Vector2(6, 13)
+
+[node name="bullet" type="Node2D"]
+
+[node name="Area2D" type="Area2D" parent="."]
+script = ExtResource("1_v7oki")
+explosion_scene = ExtResource("2_t4vbm")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="Area2D"]
+position = Vector2(0, 1.43051e-06)
+rotation = -1.5708
+scale = Vector2(0.0786853, 0.135417)
+sprite_frames = SubResource("SpriteFrames_t4vbm")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+position = Vector2(0, 0.5)
+shape = SubResource("RectangleShape2D_2b2rl")
