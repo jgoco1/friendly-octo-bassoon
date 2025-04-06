@@ -1,8 +1,10 @@
-[gd_scene load_steps=5 format=3 uid="uid://eytmojdi7oen"]
+[gd_scene load_steps=7 format=3 uid="uid://eytmojdi7oen"]
 
 [ext_resource type="Script" uid="uid://cg2wjn7mnd5fb" path="res://asteroided.gd" id="1_mcuy4"]
 [ext_resource type="Script" uid="uid://d1vupq78shn54" path="res://Player.gd" id="2_mcuy4"]
 [ext_resource type="SpriteFrames" uid="uid://dm78p44ghn41p" path="res://asteroided.tres" id="2_qhjnf"]
+[ext_resource type="Script" uid="uid://bwgbupv3ffq8" path="res://parallax_background.gd" id="4_607w6"]
+[ext_resource type="Texture2D" uid="uid://cvueabnay52r6" path="res://Untitled.png" id="5_cd1lo"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_n5ew4"]
 
@@ -22,6 +24,11 @@ scale = Vector2(2, 2)
 sprite_frames = ExtResource("2_qhjnf")
 animation = &"Med_Bank"
 
+[node name="Camera2D" type="Camera2D" parent="Player"]
+zoom = Vector2(0.5, 0.5)
+position_smoothing_enabled = true
+rotation_smoothing_enabled = true
+
 [node name="HealthUI" type="Control" parent="."]
 layout_mode = 3
 anchors_preset = 2
@@ -40,3 +47,13 @@ offset_left = 3.0
 offset_top = 1040.0
 offset_right = 103.0
 offset_bottom = 1140.0
+
+[node name="ParallaxBackground" type="ParallaxBackground" parent="."]
+script = ExtResource("4_607w6")
+
+[node name="ParallaxLayer" type="ParallaxLayer" parent="ParallaxBackground"]
+
+[node name="Sprite2D" type="Sprite2D" parent="ParallaxBackground/ParallaxLayer"]
+position = Vector2(4468, 3233)
+scale = Vector2(15, 15)
+texture = ExtResource("5_cd1lo")

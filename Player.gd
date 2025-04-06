@@ -1,7 +1,7 @@
 extends CharacterBody2D
 
 const EXPLOSION_SCENE = preload("res://Explosion.tscn")
-@export var max_speed = 200 ##Max top speed
+@export var max_speed = 400 ##Max top speed
 @export var rotation_speed = 0.2 ## How quickly it turns
 @export var rtc_speed = .05 ##How quickly it returns to going straight
 @export var max_bank_angle = 10 ##Max turn speed
@@ -19,7 +19,7 @@ var screenSize
 var rotation_direction = 0
 var gun = 5
 
-var fire_rate = 8.0  # Adjust this to the desired shots per second
+var fire_rate = 20.0  # Adjust this to the desired shots per second
 var shooting = false
 var shoot_timer = 0.0
 
@@ -38,7 +38,7 @@ func get_input():
 	velocity = transform.y * speed * -1 ##Track forward speed
 
 func _ready():
-	screenSize = get_viewport_rect().size
+	screenSize = Vector2(10000, 10000)
 
 func _physics_process(delta):
 	get_input()
@@ -64,8 +64,6 @@ func _physics_process(delta):
 
 
 func _process(delta):
-	while(health > 1):
-		health -= 1
 	if Input.is_action_pressed("shoot"):
 		shooting = true
 	else:

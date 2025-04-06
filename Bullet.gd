@@ -1,8 +1,8 @@
 extends Area2D
 
-@export var velocity = 800
+@export var velocity = 1600
 @export var damage = 10
-@export var range = 1000
+@export var range = 800
 @export var explosion_radius = 50
 
 @export var explosion_scene: PackedScene  # Assign your Explosion.tscn in the inspector
