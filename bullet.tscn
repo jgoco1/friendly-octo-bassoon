@@ -1,7 +1,6 @@
-[gd_scene load_steps=6 format=3 uid="uid://uyl5ea2k0uu5"]
+[gd_scene load_steps=5 format=3 uid="uid://uyl5ea2k0uu5"]
 
-[ext_resource type="Script" uid="uid://c5g1cmnnl72js" path="res://Bullet.gd" id="1_v7oki"]
-[ext_resource type="PackedScene" uid="uid://078mudmiwvtt" path="res://Explosion.tscn" id="2_t4vbm"]
+[ext_resource type="Script" uid="uid://ccqhyn06m3qes" path="res://bullet.gd" id="1_2b2rl"]
 [ext_resource type="Texture2D" uid="uid://b5a3rk4evs8k3" path="res://14.png" id="2_v8qja"]
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_t4vbm"]
@@ -23,18 +22,17 @@ animations = [{
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_2b2rl"]
 size = Vector2(6, 13)
 
-[node name="bullet" type="Node2D"]
+[node name="Bullet" type="Area2D"]
+script = ExtResource("1_2b2rl")
 
-[node name="Area2D" type="Area2D" parent="."]
-script = ExtResource("1_v7oki")
-explosion_scene = ExtResource("2_t4vbm")
-
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="Area2D"]
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 position = Vector2(0, 1.43051e-06)
 rotation = -1.5708
 scale = Vector2(0.0786853, 0.135417)
 sprite_frames = SubResource("SpriteFrames_t4vbm")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(0, 0.5)
 shape = SubResource("RectangleShape2D_2b2rl")
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]

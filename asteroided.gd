@@ -1,28 +1,47 @@
 extends Node2D
+
+
 var enemy_data = {
 	"fighter1": {
-		"animation_frames": preload("res://fighter1_frames.tres"),
+		"animation_frames": preload("res://asteroided.tres"),
 		"speed": 250,
 		"turn_radius": 3.5,
-		"weapon_scene": preload("res://bullet.tscn")
+		"weapon_scene": preload("res://bullet.tscn"),
+		"bullet_velocity": 800,
+		"bullet_damage": 15,
+		"bullet_range": 1200,
+		"bullet_explosion_radius": 50,
+		"fire_rate": 1.0,
+		"max_health": 100  # Base enemy health
 	},
 	"interceptor1": {
 		"animation_frames": preload("res://interceptor1_frames.tres"),
 		"speed": 400,
 		"turn_radius": 6.0,
-		"weapon_scene": preload("res://missile.tscn")
+		"weapon_scene": preload("res://missile.tscn"),
+		"bullet_velocity": 1000,
+		"bullet_damage": 25,
+		"bullet_range": 1500,
+		"bullet_explosion_radius": 70,
+		"fire_rate": 0.3,
+		"max_health": 150  # More durable enemy
 	}
 }
+
+var spawn_area = Rect2(300, 300, 1200, 800)  # Move closer to player view
 
 func spawn_enemy(type, position):
 	var enemy = preload("res://Enemy.tscn").instantiate()
 	enemy.global_position = position
 
 	if type in enemy_data:
-		var config = enemy_data[type]
-		enemy.animation_frames = config["animation_frames"]
-		enemy.speed = config["speed"]
-		enemy.turn_radius = config["turn_radius"]
-		enemy.weapon_scene = config["weapon_scene"]
+		enemy.setup(enemy_data[type])
 
-	get_parent().add_child(enemy)
+	#enemy.player = get_node("/root/Asteroided/Player")  # Assign player reference
+
+	call_deferred("add_child", enemy)  # Defer child addition
+
+func _ready():
+	for i in range(10):  # Spawn 10 enemies
+		var random_pos = Vector2(randf_range(0, 5000), randf_range(00, 5000))
+		spawn_enemy("fighter1", random_pos)

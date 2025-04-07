@@ -7,15 +7,17 @@
 [ext_resource type="Texture2D" uid="uid://cvueabnay52r6" path="res://Untitled.png" id="5_cd1lo"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_n5ew4"]
+size = Vector2(20, 40)
 
 [node name="Asteroided" type="Node2D"]
 script = ExtResource("1_mcuy4")
 
 [node name="Player" type="CharacterBody2D" parent="."]
-position = Vector2(951, 529)
+position = Vector2(1934, 1121)
 script = ExtResource("2_mcuy4")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Player"]
+position = Vector2(0, -1)
 scale = Vector2(1.5, 1.5)
 shape = SubResource("RectangleShape2D_n5ew4")
 

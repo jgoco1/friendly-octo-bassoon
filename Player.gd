@@ -1,7 +1,7 @@
 extends CharacterBody2D
 
 const EXPLOSION_SCENE = preload("res://Explosion.tscn")
-@export var max_speed = 400 ##Max top speed
+@export var max_speed = 800 ##Max top speed
 @export var rotation_speed = 0.2 ## How quickly it turns
 @export var rtc_speed = .05 ##How quickly it returns to going straight
 @export var max_bank_angle = 10 ##Max turn speed
@@ -22,6 +22,10 @@ var gun = 5
 var fire_rate = 20.0  # Adjust this to the desired shots per second
 var shooting = false
 var shoot_timer = 0.0
+var bullet_velocity = 1200
+var bullet_damage = 20
+var bullet_range = 1200
+var bullet_radius = 100
 
 func get_input():
 	if abs(rotation_direction + (Input.get_axis("left", "right") * rotation_speed)) < max_bank_angle: ##Limit max turn
@@ -38,7 +42,8 @@ func get_input():
 	velocity = transform.y * speed * -1 ##Track forward speed
 
 func _ready():
-	screenSize = Vector2(10000, 10000)
+	add_to_group("player_units")
+	screenSize = Vector2(5000, 5000)
 
 func _physics_process(delta):
 	get_input()
@@ -88,12 +93,11 @@ func shoot():
 	# Offset position so the bullet spawns slightly ahead of the player
 	var spawn_offset = Vector2(gun, -50).rotated(rotation) # Adjust the "-40" to change distance
 	gun *= -1
-	bullet.global_position = global_position + spawn_offset
+	# Assign weapon stats dynamically
+	bullet.setup(global_position+spawn_offset, rotation, (speed + bullet_velocity), bullet_damage, bullet_range, bullet_radius)  # Example values
 	
-	# Set bullet rotation to match the player
-	bullet.rotation = rotation
-	
-	get_parent().add_child(bullet) # Add bullet to the scene
+	get_parent().add_child(bullet)
+ # Add bullet to the scene
 	
 func spawn_damage_effect():
 	var explosion = EXPLOSION_SCENE.instantiate()
@@ -103,3 +107,21 @@ func spawn_damage_effect():
 	explosion.scale *= randf_range(0.5, 1.5)  # Random scale between 0.5x and 1.5x
 	
 	get_parent().add_child(explosion)
+	
+func take_damage(amount):
+	health -= amount
+
+	# Flash effect on damage (optional)
+	modulate = Color(1, 0.5, 0.5, 1)  # Brief red tint
+	await get_tree().create_timer(0.1).timeout
+	modulate = Color(1, 1, 1, 1)  # Reset color
+
+	if health <= 0:
+		die()
+
+func die():
+	var explosion = EXPLOSION_SCENE.instantiate()  # Explosion effect
+	explosion.global_position = global_position
+	get_parent().add_child(explosion)
+
+	queue_free()  # Remove player from scene (can replace with respawn logic)
