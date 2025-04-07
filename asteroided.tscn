@@ -7,7 +7,7 @@
 [ext_resource type="Texture2D" uid="uid://cvueabnay52r6" path="res://Untitled.png" id="5_cd1lo"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_n5ew4"]
-size = Vector2(20, 40)
+size = Vector2(38.6666, 86)
 
 [node name="Asteroided" type="Node2D"]
 script = ExtResource("1_mcuy4")
@@ -17,12 +17,12 @@ position = Vector2(1934, 1121)
 script = ExtResource("2_mcuy4")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Player"]
-position = Vector2(0, -1)
+position = Vector2(-2, 2.5)
 scale = Vector2(1.5, 1.5)
 shape = SubResource("RectangleShape2D_n5ew4")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="Player"]
-scale = Vector2(2, 2)
+scale = Vector2(4, 4)
 sprite_frames = ExtResource("2_qhjnf")
 animation = &"Med_Bank"
 

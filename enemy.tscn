@@ -1,18 +1,18 @@
 [gd_scene load_steps=5 format=3 uid="uid://c7gwiicq41dxm"]
 
 [ext_resource type="Script" uid="uid://cxqyty7of3xnk" path="res://enemy.gd" id="1_7k104"]
-[ext_resource type="SpriteFrames" uid="uid://dm78p44ghn41p" path="res://asteroided.tres" id="2_4gyqm"]
 [ext_resource type="PackedScene" uid="uid://078mudmiwvtt" path="res://Explosion.tscn" id="2_qi2p4"]
+[ext_resource type="SpriteFrames" uid="uid://cuiqo5e540t5o" path="res://fighter1.tres" id="3_qi2p4"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_qi2p4"]
-size = Vector2(65, 64)
+size = Vector2(95, 103)
 
 [node name="Enemy" type="Area2D"]
 script = ExtResource("1_7k104")
 explosion_scene = ExtResource("2_qi2p4")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-position = Vector2(-0.5, 0)
+position = Vector2(1.5, 0.5)
 shape = SubResource("RectangleShape2D_qi2p4")
 
 [node name="RayCast2D" type="RayCast2D" parent="."]
@@ -20,5 +20,5 @@ rotation = -1.5708
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 rotation = 1.5708
-scale = Vector2(2, 2)
-sprite_frames = ExtResource("2_4gyqm")
+scale = Vector2(4, 4)
+sprite_frames = ExtResource("3_qi2p4")

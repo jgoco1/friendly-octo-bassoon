@@ -17,16 +17,17 @@ var play_area = Rect2(100, 100, 5000, 5000)  # Define playable space
 var fire_rate = 0.5  # Reduce cooldown (shoots faster)
 var shoot_timer = 0.0
 
+var rotation_direction: float = 0.0
+var max_bank_angle: float = 10.0  # Matches player’s system
+var rtc_speed: float = 0.05  # How quickly they return to forward
+
 var bullet_velocity: float
 var bullet_damage: int
 var bullet_range: float
 var bullet_explosion_radius: float
-
 var target = null
 var enemy_config
-
 var strafe_offset = 300  # Distance for strafing behavior
-
 var wander_target: Vector2 = Vector2.ZERO  # Ensure correct type
 
 func move_toward_point(target: Vector2, speed: float, delta: float):
@@ -123,7 +124,7 @@ func shoot():
 		var bullet = weapon_scene.instantiate()
 		
 		# Spawn the bullet slightly ahead of the enemy
-		var spawn_offset = Vector2(0, -40).rotated(rotation)  # Adjusted for correct forward placement
+		var spawn_offset = Vector2(0, -60).rotated(rotation)  # Adjusted for correct forward placement
 		bullet.global_position = global_position + spawn_offset
 		
 		# Ensure bullets move forward instead of sideways

@@ -11,7 +11,7 @@ const EXPLOSION_SCENE = preload("res://Explosion.tscn")
 @onready var health_bar = get_node("/root/Asteroided/HealthUI/HealthBar")
 @onready var bullet_scene = preload("res://Bullet.tscn")
 
-@export var max_health: int = 100
+@export var max_health: int = 1000
 var health: int = max_health
 
 var speed = 0
@@ -22,10 +22,10 @@ var gun = 5
 var fire_rate = 20.0  # Adjust this to the desired shots per second
 var shooting = false
 var shoot_timer = 0.0
-var bullet_velocity = 1200
+var bullet_velocity = 1600
 var bullet_damage = 20
-var bullet_range = 1200
-var bullet_radius = 100
+var bullet_range = 2000
+var bullet_radius = 200
 
 func get_input():
 	if abs(rotation_direction + (Input.get_axis("left", "right") * rotation_speed)) < max_bank_angle: ##Limit max turn
@@ -62,24 +62,19 @@ func _physics_process(delta):
 			$AnimatedSprite2D.play("Med_Bank")
 		else:
 			$AnimatedSprite2D.play("Forward")
-
 	else:
 		$AnimatedSprite2D.play("default")
-		
-
 
 func _process(delta):
 	if Input.is_action_pressed("shoot"):
 		shooting = true
 	else:
 		shooting = false
-
 	if shooting:
 		shoot_timer -= delta
 		if shoot_timer <= 0:
 			shoot()
-			shoot_timer = 1.0 / fire_rate
-			
+			shoot_timer = 1.0 / fire_rate	
 	if health < max_health:
 		var damage_level = 1.0 - float(health) / float(max_health)  # Determines severity
 		if randf() < damage_level * delta * 3:  # Adjust spawn rate based on health
@@ -89,9 +84,8 @@ func _process(delta):
 
 func shoot():
 	var bullet = bullet_scene.instantiate()
-	
 	# Offset position so the bullet spawns slightly ahead of the player
-	var spawn_offset = Vector2(gun, -50).rotated(rotation) # Adjust the "-40" to change distance
+	var spawn_offset = Vector2(gun, -100).rotated(rotation) # Adjust the "-40" to change distance
 	gun *= -1
 	# Assign weapon stats dynamically
 	bullet.setup(global_position+spawn_offset, rotation, (speed + bullet_velocity), bullet_damage, bullet_range, bullet_radius)  # Example values
@@ -101,21 +95,17 @@ func shoot():
 	
 func spawn_damage_effect():
 	var explosion = EXPLOSION_SCENE.instantiate()
-	
 	# Randomize position and scale
 	explosion.global_position = global_position + Vector2(randf_range(-20, 20), randf_range(-20, 20))
 	explosion.scale *= randf_range(0.5, 1.5)  # Random scale between 0.5x and 1.5x
-	
 	get_parent().add_child(explosion)
 	
 func take_damage(amount):
 	health -= amount
-
 	# Flash effect on damage (optional)
 	modulate = Color(1, 0.5, 0.5, 1)  # Brief red tint
 	await get_tree().create_timer(0.1).timeout
 	modulate = Color(1, 1, 1, 1)  # Reset color
-
 	if health <= 0:
 		die()
 
@@ -123,5 +113,4 @@ func die():
 	var explosion = EXPLOSION_SCENE.instantiate()  # Explosion effect
 	explosion.global_position = global_position
 	get_parent().add_child(explosion)
-
 	queue_free()  # Remove player from scene (can replace with respawn logic)

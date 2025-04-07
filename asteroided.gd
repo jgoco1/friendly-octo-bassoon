@@ -3,16 +3,17 @@ extends Node2D
 
 var enemy_data = {
 	"fighter1": {
-		"animation_frames": preload("res://asteroided.tres"),
+		"animation_frames": preload("res://fighter1.tres"),
 		"speed": 250,
 		"turn_radius": 3.5,
 		"weapon_scene": preload("res://bullet.tscn"),
-		"bullet_velocity": 800,
+		"bullet_velocity": 1000,
 		"bullet_damage": 15,
 		"bullet_range": 1200,
-		"bullet_explosion_radius": 50,
+		"bullet_explosion_radius": 80,
 		"fire_rate": 1.0,
-		"max_health": 100  # Base enemy health
+		"max_health": 100,
+		"max_bank_angle": 15.0  # Fighter banks more
 	},
 	"interceptor1": {
 		"animation_frames": preload("res://interceptor1_frames.tres"),
@@ -24,7 +25,8 @@ var enemy_data = {
 		"bullet_range": 1500,
 		"bullet_explosion_radius": 70,
 		"fire_rate": 0.3,
-		"max_health": 150  # More durable enemy
+		"max_health": 150,
+		"max_bank_angle": 8.0  # Interceptor banks less
 	}
 }
 
