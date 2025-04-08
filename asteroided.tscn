@@ -31,24 +31,17 @@ zoom = Vector2(0.5, 0.5)
 position_smoothing_enabled = true
 rotation_smoothing_enabled = true
 
-[node name="HealthUI" type="Control" parent="."]
-layout_mode = 3
+[node name="CanvasLayer" type="CanvasLayer" parent="Player/Camera2D"]
+
+[node name="HealthBar" type="ProgressBar" parent="Player/Camera2D/CanvasLayer"]
 anchors_preset = 2
 anchor_top = 1.0
 anchor_bottom = 1.0
-offset_left = 25.0
-offset_top = 1003.0
-offset_right = 65.0
-offset_bottom = 1043.0
+offset_left = 1.0
+offset_top = -54.0
+offset_right = 490.0
+offset_bottom = -2.0
 grow_vertical = 0
-
-[node name="HealthBar" type="TextureProgressBar" parent="HealthUI"]
-modulate = Color(0.172487, 0.344433, 0.207777, 1)
-layout_mode = 0
-offset_left = 3.0
-offset_top = 1040.0
-offset_right = 103.0
-offset_bottom = 1140.0
 
 [node name="ParallaxBackground" type="ParallaxBackground" parent="."]
 script = ExtResource("4_607w6")

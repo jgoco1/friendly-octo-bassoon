@@ -11,9 +11,13 @@ config_version=5
 [application]
 
 config/name="ATATsteroids"
-run/main_scene="res://asteroided.tscn"
+run/main_scene="uid://vlurigur7psw"
 config/features=PackedStringArray("4.4", "Forward Plus")
 config/icon="res://icon.svg"
+
+[autoload]
+
+GameManager="*res://GameManager.gd"
 
 [display]
 

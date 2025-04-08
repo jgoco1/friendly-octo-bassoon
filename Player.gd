@@ -8,10 +8,9 @@ const EXPLOSION_SCENE = preload("res://Explosion.tscn")
 @export var accel = 10 ##How Quickly it accellerates
 @export var drag = 5 ##How quickly the ship decelerates
 
-@onready var health_bar = get_node("/root/Asteroided/HealthUI/HealthBar")
-@onready var bullet_scene = preload("res://bullet.tscn")
-
-@export var max_health: int = 1000
+@onready var bullet_scene = preload("res://Bullet.tscn")
+@onready var health_bar = get_node("Camera2D/CanvasLayer/HealthBar")
+@export var max_health: int = 100
 var health: int = max_health
 
 var speed = 0
@@ -43,7 +42,11 @@ func get_input():
 
 func _ready():
 	add_to_group("player_units")
-	screenSize = Vector2(5000, 5000)
+	screenSize = Vector2(10000, 10000)
+	if health_bar:
+		health_bar.value = float(health) / float(max_health) * 100
+		health_bar.add_theme_color_override("font_color", Color(0, 0, 0))  # Ensures text stays black
+		health_bar.modulate = Color(0,1,0,2)
 
 func _physics_process(delta):
 	get_input()
@@ -79,7 +82,6 @@ func _process(delta):
 		var damage_level = 1.0 - float(health) / float(max_health)  # Determines severity
 		if randf() < damage_level * delta * 3:  # Adjust spawn rate based on health
 			spawn_damage_effect()
-	health_bar.value = float(health) / float(max_health) * 100
 
 
 func shoot():
@@ -102,15 +104,30 @@ func spawn_damage_effect():
 	
 func take_damage(amount):
 	health -= amount
+	health = max(health, 0)  # Ensure health doesn't drop below zero
+	
+	if health_bar:
+		health_bar.value = float(health) / float(max_health) * 100
+		
+		# Calculate color transition from green to red
+		var health_ratio = float(health) / max_health
+		var new_color = Color(1.0, health_ratio, health_ratio * 0.5, 2)  # More red as health decreases
+		health_bar.modulate = new_color
+	
 	# Flash effect on damage (optional)
-	modulate = Color(1, 0.5, 0.5, 1)  # Brief red tint
+	modulate = Color(1, 0.5, 0.5, 1)
 	await get_tree().create_timer(0.1).timeout
-	modulate = Color(1, 1, 1, 1)  # Reset color
+	modulate = Color(1, 1, 1, 1)
+
 	if health <= 0:
 		die()
 
 func die():
-	var explosion = EXPLOSION_SCENE.instantiate()  # Explosion effect
+	var explosion = EXPLOSION_SCENE.instantiate()
 	explosion.global_position = global_position
 	get_parent().add_child(explosion)
-	queue_free()  # Remove player from scene (can replace with respawn logic)
+
+	await get_tree().create_timer(.5).timeout  # Delay before returning to menu
+
+	queue_free()  # Remove player from scene
+	GameManager.return_to_menu()

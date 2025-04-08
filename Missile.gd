@@ -25,8 +25,11 @@ func _process(delta):
 
 func find_target():
 	var possible_targets = get_tree().get_nodes_in_group(target_group)
+	
 	if possible_targets.size() > 0:
-		target = possible_targets[0]  # Simplified, can be improved with closest target logic
+		target = possible_targets.reduce(func(a, b):
+			return a.global_position.distance_to(global_position) < b.global_position.distance_to(global_position) if a else b
+		)
 
 func _on_area_entered(area):
 	explode()

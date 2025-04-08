@@ -1,0 +1,26 @@
+[gd_scene load_steps=2 format=3 uid="uid://vlurigur7psw"]
+
+[ext_resource type="Script" uid="uid://cuk4eefd7pv6m" path="res://StartMenu.gd" id="1_d3352"]
+
+[node name="StartMenu" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("1_d3352")
+
+[node name="Itsa Game" type="Label" parent="."]
+layout_mode = 0
+offset_left = 316.0
+offset_top = 223.0
+offset_right = 394.0
+offset_bottom = 246.0
+text = "Itsa Game"
+
+[node name="StartButton" type="Button" parent="."]
+layout_mode = 0
+offset_left = 299.0
+offset_top = 353.0
+offset_right = 395.0
+offset_bottom = 384.0
+text = "Start Game"

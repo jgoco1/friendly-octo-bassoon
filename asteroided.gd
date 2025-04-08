@@ -15,7 +15,7 @@ var enemy_data = {
 		"max_bank_angle": 15.0  # Fighter banks more
 	},
 	"interceptor1": {
-		"animation_frames": preload("res://interceptor1_frames.tres"),
+		"animation_frames": preload("res://interceptor1.tres"),
 		"speed": 400,
 		"turn_radius": 6.0,
 		"weapon_scene": preload("res://Missile.tscn"),
@@ -30,17 +30,17 @@ var enemy_data = {
 }
 
 var spawn_area = Rect2(300, 300, 1200, 800)  # Move closer to player view
+var enemy_scene = preload("res://enemy.tscn")
 
 func spawn_enemy(type, position):
-	var enemy = preload("res://enemy.tscn").instantiate()
+	var enemy = enemy_scene.instantiate()
 	enemy.global_position = position
-
+	
 	if type in enemy_data:
 		enemy.setup(enemy_data[type])
 
-	#enemy.player = get_node("/root/Asteroided/Player")  # Assign player reference
+	call_deferred("add_child", enemy)
 
-	call_deferred("add_child", enemy)  # Defer child addition
 
 func _ready():
 	for i in range(10):  # Spawn 10 enemies

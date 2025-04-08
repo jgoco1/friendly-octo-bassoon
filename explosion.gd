@@ -4,9 +4,12 @@ extends Node2D
 
 func _ready():
 	if sprite:
-		sprite.rotation = randf_range(0, TAU)  # Random rotation between 0 and 360 degrees
+		sprite.rotation = randf_range(0, TAU)  # Random rotation
+		sprite.scale = Vector2(randf_range(0.8, 1.2), randf_range(0.8, 1.2))  # Slight variation in explosion size
+		sprite.modulate.a = randf_range(0.7, 1.0)  # Randomized transparency
 		sprite.play("explode")
 		sprite.animation_finished.connect(on_animation_finished)
+
 	else:
 		print("Error: ExplodeSprite node not found!")
 
