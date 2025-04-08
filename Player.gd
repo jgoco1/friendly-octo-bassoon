@@ -9,7 +9,7 @@ const EXPLOSION_SCENE = preload("res://Explosion.tscn")
 @export var drag = 5 ##How quickly the ship decelerates
 
 @onready var health_bar = get_node("/root/Asteroided/HealthUI/HealthBar")
-@onready var bullet_scene = preload("res://Bullet.tscn")
+@onready var bullet_scene = preload("res://bullet.tscn")
 
 @export var max_health: int = 1000
 var health: int = max_health

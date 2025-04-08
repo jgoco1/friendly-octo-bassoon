@@ -1,6 +1,5 @@
 extends Node2D
 
-
 var enemy_data = {
 	"fighter1": {
 		"animation_frames": preload("res://fighter1.tres"),
@@ -19,7 +18,7 @@ var enemy_data = {
 		"animation_frames": preload("res://interceptor1_frames.tres"),
 		"speed": 400,
 		"turn_radius": 6.0,
-		"weapon_scene": preload("res://missile.tscn"),
+		"weapon_scene": preload("res://Missile.tscn"),
 		"bullet_velocity": 1000,
 		"bullet_damage": 25,
 		"bullet_range": 1500,
@@ -33,7 +32,7 @@ var enemy_data = {
 var spawn_area = Rect2(300, 300, 1200, 800)  # Move closer to player view
 
 func spawn_enemy(type, position):
-	var enemy = preload("res://Enemy.tscn").instantiate()
+	var enemy = preload("res://enemy.tscn").instantiate()
 	enemy.global_position = position
 
 	if type in enemy_data:
