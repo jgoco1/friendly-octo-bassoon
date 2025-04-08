@@ -12,14 +12,11 @@ var smoke_rate = 1.0  # Adjust rate for smoke emission
 @export var targeting_range: float = 1000
 @export var enemy_type: String = "fighter"
 @export var max_health: int = 100  # Set in Inspector for different enemy types
+@export var rotation_speed: float = 4  # Speed at which enemies adjust their heading
 var health: int = max_health
 var play_area = Rect2(100, 100, 5000, 5000)  # Define playable space
 var fire_rate = 0.5  # Reduce cooldown (shoots faster)
 var shoot_timer = 0.0
-
-var rotation_direction: float = 0.0
-var max_bank_angle: float = 10.0  # Matches player’s system
-var rtc_speed: float = 0.05  # How quickly they return to forward
 
 var bullet_velocity: float
 var bullet_damage: int
@@ -30,29 +27,38 @@ var enemy_config
 var strafe_offset = 300  # Distance for strafing behavior
 var wander_target: Vector2 = Vector2.ZERO  # Ensure correct type
 
+var rotation_direction = 0
+
 func move_toward_point(target: Vector2, speed: float, delta: float):
 	var direction = (target - global_position).normalized()
 	global_position += direction * speed * delta
+	
+	var forward_direction = Vector2.UP.rotated(rotation)  # Current facing direction
+	var target_direction = (target - global_position).normalized()
+	var cross_product = forward_direction.cross(target_direction) #If product is greater than 0, target is to the left
 
 func _process(delta):
 	find_target()
-	var movement_target: Vector2  # Ensure movement_target is properly initialized
-
+	var movement_target: Vector2
+	
 	if target:
-		# Calculate perpendicular strafe direction manually with randomness
-		var direction_to_player = (target.global_position - global_position).normalized()
-		var random_strafe_factor = randf_range(0.8, 1.2)  # Introduces slight variation in strafe distance
-		var strafe_direction = Vector2(-direction_to_player.y, direction_to_player.x) * random_strafe_factor  # Perpendicular vector with randomness
-		movement_target = target.global_position + strafe_direction * strafe_offset
+		movement_target = target.global_position
 	else:
 		movement_target = wander_target
 		if global_position.distance_to(wander_target) < 20:
 			set_random_target()
-	move_toward_point(movement_target, speed, delta)
-	# Rotate sprite to face movement direction
-	var direction = movement_target - global_position
-	if direction.length() > 0:
-		rotation = direction.angle()
+
+	move_forward(delta)
+
+	# Determine rotation adjustment using cross product
+	var forward_direction = Vector2.UP.rotated(rotation)
+	var target_direction = (movement_target - global_position).normalized()
+	var cross_product = forward_direction.cross(target_direction)
+
+	# Gradually rotate toward the target direction
+	rotation += rotation_speed * cross_product * delta
+
+
 	# Faster shooting while targeting player
 	if target:
 		shoot_timer -= delta
@@ -118,17 +124,25 @@ func find_target():
 		if global_position.distance_to(possible_target.global_position) <= targeting_range:
 			target = possible_target
 			return
-
+func move_forward(delta):
+	var forward_direction = Vector2.UP.rotated(rotation)
+	global_position += forward_direction * speed * delta
+	
 func shoot():
 	if weapon_scene:
 		var bullet = weapon_scene.instantiate()
 		
 		# Spawn the bullet slightly ahead of the enemy
-		var spawn_offset = Vector2(0, -60).rotated(rotation)  # Adjusted for correct forward placement
+		var spawn_offset = Vector2(0, -80).rotated(rotation)  # Adjusted for correct forward placement
 		bullet.global_position = global_position + spawn_offset
+
+		# Calculate the enemy's current velocity
+		var enemy_velocity = Vector2.UP.rotated(rotation) * speed
+
+		# Ensure bullets move forward with inherited velocity
+		var bullet_velocity_vector = Vector2.UP.rotated(rotation) * bullet_velocity + enemy_velocity
 		
-		# Ensure bullets move forward instead of sideways
-		bullet.setup(global_position + spawn_offset, rotation + PI/2, bullet_velocity, bullet_damage, bullet_range, bullet_explosion_radius)
+		bullet.setup(global_position + spawn_offset, rotation, bullet_velocity_vector.length(), bullet_damage, bullet_range, bullet_explosion_radius)
 		
 		get_parent().add_child(bullet)
 		

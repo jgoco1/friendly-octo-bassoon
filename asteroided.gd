@@ -6,7 +6,7 @@ var enemy_data = {
 		"speed": 250,
 		"turn_radius": 3.5,
 		"weapon_scene": preload("res://bullet.tscn"),
-		"bullet_velocity": 1000,
+		"bullet_velocity": 800,
 		"bullet_damage": 15,
 		"bullet_range": 1200,
 		"bullet_explosion_radius": 80,
