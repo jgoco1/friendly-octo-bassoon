@@ -8,7 +8,7 @@ const EXPLOSION_SCENE = preload("res://Explosion.tscn")
 @export var accel = 10 ##How Quickly it accellerates
 @export var drag = 5 ##How quickly the ship decelerates
 
-@onready var bullet_scene = preload("res://Bullet.tscn")
+@onready var bullet_scene = preload("res://bullet.tscn")
 @onready var health_bar = get_node("Camera2D/CanvasLayer/HealthBar")
 @export var max_health: int = 100
 var health: int = max_health
