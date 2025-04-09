@@ -1,46 +1,35 @@
 extends Area2D
 
+
+var enemy_points = {"fighter": 100, "interceptor": 200}
 var smoke_timer = 0.0
 var smoke_rate = 1.0  # Adjust rate for smoke emission
 
 @onready var sprite = $AnimatedSprite2D  # Ensure this matches the node name in your Enemy scene
 @export var explosion_scene: PackedScene  # Assign your Explosion.tscn in the Inspector
 @export var animation_frames: SpriteFrames  # Assign animation frames in Inspector
-@export var speed: float = 300
-@export var turn_radius: float = 5.0
+@export var speed: float = 400
 @export var weapon_scene: PackedScene
 @export var targeting_range: float = 1000
-@export var enemy_type: String = "fighter"
 @export var max_health: int = 100  # Set in Inspector for different enemy types
-@export var rotation_speed: float = 4  # Speed at which enemies adjust their heading
+@export var rotation_speed: float = 2  # Speed at which enemies adjust their heading
 var health: int = max_health
 var play_area = Rect2(100, 100, 5000, 5000)  # Define playable space
+
 var fire_rate = 0.5  # Reduce cooldown (shoots faster)
 var shoot_timer = 0.0
-
 var bullet_velocity: float
 var bullet_damage: int
 var bullet_range: float
 var bullet_explosion_radius: float
+
 var target = null
 var enemy_config
-var strafe_offset = 300  # Distance for strafing behavior
 var wander_target: Vector2 = Vector2.ZERO  # Ensure correct type
-
-var rotation_direction = 0
-
-func move_toward_point(target: Vector2, speed: float, delta: float):
-	var direction = (target - global_position).normalized()
-	global_position += direction * speed * delta
-	
-	var forward_direction = Vector2.UP.rotated(rotation)  # Current facing direction
-	var target_direction = (target - global_position).normalized()
-	var cross_product = forward_direction.cross(target_direction) #If product is greater than 0, target is to the left
 
 func _process(delta):
 	find_target()
 	var movement_target: Vector2
-	
 	if target:
 		movement_target = target.global_position
 	else:
@@ -49,12 +38,10 @@ func _process(delta):
 			set_random_target()
 
 	move_forward(delta)
-
 	# Determine rotation adjustment using cross product
 	var forward_direction = Vector2.UP.rotated(rotation)
 	var target_direction = (movement_target - global_position).normalized()
 	var cross_product = forward_direction.cross(target_direction)
-
 	# Gradually rotate toward the target direction
 	rotation += rotation_speed * cross_product * delta
 
@@ -88,7 +75,7 @@ func setup(config):
 	enemy_config = config
 	animation_frames = enemy_config["animation_frames"]
 	speed = enemy_config["speed"]
-	turn_radius = enemy_config["turn_radius"]
+	rotation_speed = enemy_config["turn_radius"]
 	weapon_scene = enemy_config["weapon_scene"]
 
 	# Store bullet-related values
@@ -107,10 +94,9 @@ func setup(config):
 func _ready():
 	add_to_group("enemies")
 	set_random_target()
-	modulate = Color(1,1,1,1)
 	if sprite:
 		sprite.sprite_frames = animation_frames  # Set animation frames dynamically
-		sprite.play("default")  # Ensure the enemy starts in its idle animation
+		sprite.play("Forward")  # Ensure the enemy starts in its idle animation
 	else:
 		print("Error: AnimatedSprite2D node not found!")
 
@@ -119,11 +105,11 @@ func find_target():
 	if target and global_position.distance_to(target.global_position) > targeting_range * 1.5:  # Lose target if too far
 		target = null
 	
-	
 	for possible_target in possible_targets:
 		if global_position.distance_to(possible_target.global_position) <= targeting_range:
 			target = possible_target
 			return
+			
 func move_forward(delta):
 	var forward_direction = Vector2.UP.rotated(rotation)
 	global_position += forward_direction * speed * delta
@@ -131,40 +117,46 @@ func move_forward(delta):
 func shoot():
 	if weapon_scene:
 		var bullet = weapon_scene.instantiate()
-		
 		# Spawn the bullet slightly ahead of the enemy
 		var spawn_offset = Vector2(0, -80).rotated(rotation)  # Adjusted for correct forward placement
 		bullet.global_position = global_position + spawn_offset
-
 		# Calculate the enemy's current velocity
 		var enemy_velocity = Vector2.UP.rotated(rotation) * speed
-
 		# Ensure bullets move forward with inherited velocity
 		var bullet_velocity_vector = Vector2.UP.rotated(rotation) * bullet_velocity + enemy_velocity
-		
 		bullet.setup(global_position + spawn_offset, rotation, bullet_velocity_vector.length(), bullet_damage, bullet_range, bullet_explosion_radius)
-		
 		get_parent().add_child(bullet)
 		
 func take_damage(amount):
 	health -= amount
-	
 	if health <= 0:
 		die()
 		
 func emit_smoke():
 	var health_ratio = float(health) / max_health  # Get remaining health percentage
 	var smoke_intensity = clamp(1.5 - health_ratio, 0.5, 1.5)  # More smoke as health decreases
-	
 	var smoke = explosion_scene.instantiate()  # Reusing explosion effect
 	smoke.global_position = global_position
+	smoke.scale *= randf_range(.1,2)
 	smoke.modulate = Color(0.5, 0.5, 0.5, 0.8 * smoke_intensity)  # Adjust transparency with damage level
-	
 	get_parent().add_child(smoke)
 	
 func die():
-	var explosion = explosion_scene.instantiate()  # Play explosion effect
+	GameManager.add_score(100)  # Award points
+
+	var explosion = explosion_scene.instantiate()
 	explosion.global_position = global_position
+	explosion.scale *= randf_range(3,5)
 	get_parent().add_child(explosion)
-	
-	queue_free()  # Remove enemy from the scene
+
+	# Hide the enemy and disable collisions/interactions
+	visible = false
+	set_process(false)  # Stop movement processing
+	set_physics_process(false)  # Disable physics interactions
+	collision_layer = 0  # Prevent further collisions
+
+	await get_tree().create_timer(3.0).timeout  # 3-second respawn delay
+	get_parent().spawn_random_enemy()
+	#get_parent().spawn_enemy(enemy_config)  # Respawn same enemy type
+
+	queue_free()  # Fully remove enemy after respawn is scheduled

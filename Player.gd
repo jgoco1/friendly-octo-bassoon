@@ -5,11 +5,13 @@ const EXPLOSION_SCENE = preload("res://Explosion.tscn")
 @export var rotation_speed = 0.2 ## How quickly it turns
 @export var rtc_speed = .05 ##How quickly it returns to going straight
 @export var max_bank_angle = 10 ##Max turn speed
-@export var accel = 10 ##How Quickly it accellerates
+@export var accel = 10 ##How Quickly it accelerates
 @export var drag = 5 ##How quickly the ship decelerates
 
 @onready var bullet_scene = preload("res://bullet.tscn")
+@onready var missile_scene = preload("res://Missile.tscn")
 @onready var health_bar = get_node("Camera2D/CanvasLayer/HealthBar")
+@onready var score_label = get_node("Camera2D/CanvasLayer/Score")
 @export var max_health: int = 100
 var health: int = max_health
 
@@ -67,6 +69,7 @@ func _physics_process(delta):
 			$AnimatedSprite2D.play("Forward")
 	else:
 		$AnimatedSprite2D.play("default")
+	score_label.text = "Score: " + str(GameManager.score)
 
 func _process(delta):
 	if Input.is_action_pressed("shoot"):
@@ -80,8 +83,10 @@ func _process(delta):
 			shoot_timer = 1.0 / fire_rate	
 	if health < max_health:
 		var damage_level = 1.0 - float(health) / float(max_health)  # Determines severity
-		if randf() < damage_level * delta * 3:  # Adjust spawn rate based on health
+		var spawn_chance = damage_level * delta * 6  # Increased multiplier for lower health
+		if randf() < spawn_chance:
 			spawn_damage_effect()
+
 
 
 func shoot():
@@ -125,9 +130,10 @@ func take_damage(amount):
 func die():
 	var explosion = EXPLOSION_SCENE.instantiate()
 	explosion.global_position = global_position
+	explosion.scale *= randf_range(3,5)
 	get_parent().add_child(explosion)
 
-	await get_tree().create_timer(.5).timeout  # Delay before returning to menu
+	await get_tree().create_timer(.25).timeout  # Delay before returning to menu
 
 	queue_free()  # Remove player from scene
 	GameManager.return_to_menu()

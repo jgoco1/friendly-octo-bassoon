@@ -37,11 +37,24 @@ rotation_smoothing_enabled = true
 anchors_preset = 2
 anchor_top = 1.0
 anchor_bottom = 1.0
-offset_left = 1.0
+offset_left = 30.0
 offset_top = -54.0
-offset_right = 490.0
+offset_right = 519.0
 offset_bottom = -2.0
 grow_vertical = 0
+
+[node name="Score" type="Label" parent="Player/Camera2D/CanvasLayer"]
+modulate = Color(0, 0, 0, 1)
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 30.0
+offset_top = -90.0
+offset_right = 94.0
+offset_bottom = -67.0
+grow_vertical = 0
+text = "Score:"
+horizontal_alignment = 1
 
 [node name="ParallaxBackground" type="ParallaxBackground" parent="."]
 script = ExtResource("4_607w6")

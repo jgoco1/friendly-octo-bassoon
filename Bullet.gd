@@ -16,7 +16,6 @@ func _process(delta):
 	var movement = direction * speed * delta
 	global_position += movement
 	traveled_distance += movement.length()
-
 	# Explode when reaching max range
 	if traveled_distance >= max_range:
 		explode()
