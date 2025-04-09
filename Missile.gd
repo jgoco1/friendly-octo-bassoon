@@ -88,7 +88,7 @@ func explode():
 	var explosion = preload("res://Explosion.tscn").instantiate()
 	explosion.global_position = global_position
 	# Scale up the explosion effect for missiles
-	explosion.scale *= 2.0  # Adjust this value to control explosion size
+	explosion.scale *= 4.0  # Adjust this value to control explosion size
 	get_parent().add_child(explosion)
 	
 	for area in get_tree().get_nodes_in_group(target_group):

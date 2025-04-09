@@ -86,6 +86,7 @@ func setup(config):
 
 	# Store health and fire rate values
 	max_health = enemy_config["max_health"]
+	targeting_range = enemy_config["targeting_range"]
 	health = max_health
 	fire_rate = enemy_config.get("fire_rate", 0.5)  # Default to 0.5 if not set
 
