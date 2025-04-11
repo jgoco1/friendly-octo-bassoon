@@ -4,19 +4,23 @@ var description:String = "A ship"
 #var ship_type = "Pi_Fighter"
 
 const EXPLOSION_SCENE = preload("res://Explosion.tscn")
-@export var max_speed = 800 ##Max top speed
-@export var rotation_speed = 0.2 ## How quickly it turns
+var max_speed = 800 ##Max top speed
+var rotation_speed = 0.2 ## How quickly it turns
 @export var rtc_speed = .05 ##How quickly it returns to going straight
-@export var max_bank_angle = 10 ##Max turn speed
-@export var accel = 10 ##How Quickly it accelerates
-@export var drag = 5 ##How quickly the ship decelerates
+var max_bank_angle = 10 ##Max turn speed
+var accel = 10 ##How Quickly it accelerates
+var drag = 5 ##How quickly the ship decelerates
 
 @onready var bullet_scene = preload("res://bullet.tscn")
 @onready var missile_scene = preload("res://Missile.tscn")
+@onready var camera = $Camera2D
+var zoom_speed = 2000  # Adjust zoom speed
+var min_zoom = 0.5  # Minimum zoom level (more zoomed in)
+var max_zoom = 100.0  # Maximum zoom level (zoomed out)
 @onready var health_bar = get_node("Camera2D/CanvasLayer/HealthBar")
 @onready var score_label = get_node("Camera2D/CanvasLayer/Score")
 @onready var missile_timer = get_node("Camera2D/CanvasLayer/MissileTimer")
-@export var max_health: int = 100
+var max_health: int = 100
 var health: int = max_health
 
 var speed = 0
@@ -45,9 +49,9 @@ var player_types = {
 		"bullet_scene": preload("res://bullet.tscn"),
 		"missile_scene": preload("res://Missile.tscn"),
 		"max_speed": 1000,
-		"rotation_speed": 0.1,
+		"rotation_speed": 0.2,
 		"max_bank_angle": 10,
-		"accel": 8,
+		"accel": 10,
 		"drag": 4,
 		"max_health": 400,
 		"fire_rate": 10,
@@ -61,11 +65,11 @@ var player_types = {
 		"description": "A highly maneuverable dog-fighter. 
 						Slower top speed but fast acceleration and banking. 
 						Reducing power budget for shields allows greater firepower for main guns, 
-						but the lack of a targetting droid means missiles take longet to recharge.",
+						but the lack of a targetting droid means missiles take longer to recharge.",
 		"animation_frames": preload("res://fighter1.tres"),
 		"bullet_scene": preload("res://bullet.tscn"),
 		"missile_scene": preload("res://Missile.tscn"),
-		"max_speed": 600,
+		"max_speed": 800,
 		"rotation_speed": 0.3,
 		"max_bank_angle": 10,
 		"accel": 20,
@@ -81,18 +85,25 @@ var player_types = {
 }
 
 func get_input():
-	if abs(rotation_direction + (Input.get_axis("left", "right") * rotation_speed)) < max_bank_angle: ##Limit max turn
-		rotation_direction = rotation_direction + (Input.get_axis("left", "right") * rotation_speed)
+	# Handle rotation controls
+	if abs(rotation_direction + (Input.get_axis("left", "right") * rotation_speed)) < max_bank_angle:
+		rotation_direction += Input.get_axis("left", "right") * rotation_speed
 
 	if abs(rotation_direction) > 0 and !Input.get_axis("left", "right"):
 		rotation_direction = lerp(rotation_direction, 0.0, rtc_speed)
-	
+
+	# Handle forward movement
 	speed += Input.get_axis("down", "up") * accel
-	if(!Input.get_axis("down", "up")):
+	if (!Input.get_axis("down", "up")):
 		speed -= drag
 	speed = clamp(speed, 0, max_speed)
-	
-	velocity = transform.y * speed * -1 ##Track forward speed
+
+	# Handle strafing
+	var strafe_speed = rotation_speed * 2000  # Defines lateral movement speed
+	var strafe_direction = Input.get_axis("Strafe_Left", "Strafe_Right")
+
+	var lateral_movement = transform.x * strafe_speed * strafe_direction
+	velocity = transform.y * speed * -1 + lateral_movement  # Apply independent strafe
 
 func _ready():
 	assign_values(GameManager.selected_ship_type)  # Use the selected ship
@@ -134,7 +145,8 @@ func _physics_process(delta):
 	get_input()
 	rotation += rotation_direction * delta
 	move_and_slide()
-	position += velocity * delta
+	position += velocity * delta  # Now includes strafing effect
+
 	position.x = clamp(position.x, 0, screenSize.x)
 	position.y = clamp(position.y, 0, screenSize.y)
 	$AnimatedSprite2D.flip_v = false
@@ -152,6 +164,15 @@ func _physics_process(delta):
 	score_label.text = "Score: " + str(GameManager.score)
 
 func _process(delta):
+	 # Detect mouse wheel movement for zooming
+	var scroll_up = Input.is_action_just_pressed("Zoom_Out")  # Scroll Up
+	var scroll_down = Input.is_action_just_pressed("Zoom_In")  # Scroll Down
+	if scroll_up:
+		camera.zoom = (camera.zoom - Vector2(0.1, 0.1)).clamp(Vector2(min_zoom, min_zoom), Vector2(max_zoom, max_zoom))
+	if scroll_down:
+		camera.zoom = (camera.zoom + Vector2(0.1, 0.1)).clamp(Vector2(min_zoom, min_zoom), Vector2(max_zoom, max_zoom))
+
+
 	if Input.is_action_pressed("shoot"):
 		shooting = true
 	else:

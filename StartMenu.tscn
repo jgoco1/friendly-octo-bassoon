@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3 uid="uid://vlurigur7psw"]
+[gd_scene load_steps=3 format=3 uid="uid://vlurigur7psw"]
 
 [ext_resource type="Script" uid="uid://cuk4eefd7pv6m" path="res://StartMenu.gd" id="1_d3352"]
+[ext_resource type="SpriteFrames" uid="uid://c6ok82d4tsuwd" path="res://interceptor1.tres" id="2_ufv5y"]
 
 [node name="StartMenu" type="Control"]
 layout_mode = 3
@@ -11,21 +12,23 @@ script = ExtResource("1_d3352")
 
 [node name="Itsa Game" type="Label" parent="."]
 layout_mode = 0
-offset_left = 859.0
-offset_top = 288.0
-offset_right = 1006.0
-offset_bottom = 363.0
+offset_left = 955.0
+offset_top = 238.0
+offset_right = 1159.0
+offset_bottom = 391.0
 text = "Itsa Game
-Use WASD to move
+Use W to accelerate,
+A and D rotate left or right
+Q and E Strafe left or right
 Left click to shoot
 Right click for missile"
 
 [node name="StartButton" type="Button" parent="."]
 layout_mode = 0
-offset_left = 889.0
-offset_top = 643.0
-offset_right = 985.0
-offset_bottom = 674.0
+offset_left = 989.0
+offset_top = 663.0
+offset_right = 1085.0
+offset_bottom = 694.0
 text = "Start Game"
 
 [node name="ShipTitleLabel" type="Label" parent="."]
@@ -38,9 +41,9 @@ text = "Interceptor"
 
 [node name="ShipDescriptionLabel" type="Label" parent="."]
 layout_mode = 0
-offset_left = 224.0
+offset_left = 200.0
 offset_top = 557.0
-offset_right = 483.0
+offset_right = 459.0
 offset_bottom = 580.0
 text = "Interceptor - Well rounded choice"
 
@@ -59,3 +62,9 @@ offset_top = 488.0
 offset_right = 528.0
 offset_bottom = 519.0
 text = ">"
+
+[node name="ShipPreview" type="AnimatedSprite2D" parent="."]
+position = Vector2(359, 370)
+scale = Vector2(6, 6)
+sprite_frames = ExtResource("2_ufv5y")
+animation = &"Med_Bank"

@@ -8,7 +8,10 @@ var player_types = {
 		"animation_frames": preload("res://interceptor1.tres")
 	},
 	"Pi_Fighter": {
-		"description": "A highly maneuverable dog-fighter...",
+		"description": "A highly maneuverable dog-fighter. 
+						Slower top speed but fast acceleration and banking. 
+						Reducing power budget for shields allows greater firepower for main guns, 
+						but the lack of a targetting droid means missiles take longer to recharge.",
 		"animation_frames": preload("res://fighter1.tres")
 	}
 }
