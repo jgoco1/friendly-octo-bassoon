@@ -4,7 +4,7 @@ var enemy_data = {
 	"fighter1": {
 		"animation_frames": preload("res://fighter1.tres"),
 		"speed": 500,
-		"turn_radius": 10, #How quickly fighter turns turns
+		"turn_radius": 3, #How quickly fighter turns turns
 		"weapon_scene": preload("res://bullet.tscn"),
 		"bullet_velocity": 1200,
 		"bullet_damage": 15,
@@ -17,7 +17,7 @@ var enemy_data = {
 	"interceptor1": {
 		"animation_frames": preload("res://interceptor1.tres"),
 		"speed": 1000,
-		"turn_radius": 3,
+		"turn_radius": 1,
 		"weapon_scene": preload("res://Missile.tscn"),
 		"bullet_velocity": 1000,
 		"bullet_damage": 25,
@@ -49,12 +49,10 @@ func check_respawn():
 		
 func spawn_enemy(type_or_config):
 	var safe_distance = 800  # Minimum distance from player
-
 	var player_position = get_node("/root/Asteroided/Player").global_position
 	var spawn_position = Vector2.ZERO
-
 	while true:
-		spawn_position = Vector2(randf_range(0, 5000), randf_range(0, 5000))
+		spawn_position = Vector2(randf_range(0, 10000), randf_range(0, 10000))
 		
 		# Ensure enemy spawns outside player's view range
 		if player_position.distance_to(spawn_position) > safe_distance:
@@ -71,9 +69,13 @@ func spawn_enemy(type_or_config):
 	call_deferred("add_child", enemy)  # Defer addition to avoid performance issues
 	
 func spawn_random_enemy():
-	var safe_distance = 800  # Minimum distance from player
-
-	var player_position = get_node("/root/Asteroided/Player").global_position
+	var safe_distance = 1200  # Minimum distance from player
+	var player_position = 0
+	if(get_node("/root/Asteroided/Player")):
+		player_position = get_node("/root/Asteroided/Player").global_position
+	else:
+		print("No player found")
+		return(0)
 	var spawn_position = Vector2.ZERO
 
 	while true:
@@ -86,7 +88,7 @@ func spawn_random_enemy():
 	var enemy = preload("res://enemy.tscn").instantiate()
 	enemy.global_position = spawn_position
 	var rand = randf_range(0,100)
-	if rand < 80:
+	if rand < 90:
 		enemy.setup(enemy_data["fighter1"])
 	else:
 		enemy.setup(enemy_data["interceptor1"])

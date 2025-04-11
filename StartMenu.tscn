@@ -17,7 +17,8 @@ offset_right = 1006.0
 offset_bottom = 363.0
 text = "Itsa Game
 Use WASD to move
-Left click to shoot"
+Left click to shoot
+Right click for missile"
 
 [node name="StartButton" type="Button" parent="."]
 layout_mode = 0

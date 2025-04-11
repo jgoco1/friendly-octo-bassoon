@@ -1,5 +1,8 @@
 extends CharacterBody2D
 
+var description:String = "A ship"
+var ship_type = "Pi_Fighter"
+
 const EXPLOSION_SCENE = preload("res://Explosion.tscn")
 @export var max_speed = 800 ##Max top speed
 @export var rotation_speed = 0.2 ## How quickly it turns
@@ -12,21 +15,69 @@ const EXPLOSION_SCENE = preload("res://Explosion.tscn")
 @onready var missile_scene = preload("res://Missile.tscn")
 @onready var health_bar = get_node("Camera2D/CanvasLayer/HealthBar")
 @onready var score_label = get_node("Camera2D/CanvasLayer/Score")
+@onready var missile_timer = get_node("Camera2D/CanvasLayer/MissileTimer")
 @export var max_health: int = 100
 var health: int = max_health
 
 var speed = 0
 var screenSize
 var rotation_direction = 0
-var gun = 5
+var gun = 5 #distance between 2 guns on ship (enter 0 if you want shots to come from center)
 
-var fire_rate = 20.0  # Adjust this to the desired shots per second
+var fire_rate = 40.0  # Adjust this to the desired shots per second
 var shooting = false
 var shoot_timer = 0.0
+var special_cooldown = 3
+var special_timer = 0.0
 var bullet_velocity = 1600
 var bullet_damage = 20
 var bullet_range = 2000
 var bullet_radius = 200
+##max_speed, rotation_speed, max_bank_angle, accel, drag
+##bullet_scene, missile_scene
+##max_health, fire_rate, special_cooldown, bullet_velocity, bullet_damage, bullet_range, bullet_radius
+
+var player_types = {
+	"default" : {
+		"description": "Interceptor - Well rounded choice",
+		"animation_frames": preload("res://interceptor1.tres"),
+		"bullet_scene": preload("res://bullet.tscn"),
+		"missile_scene": preload("res://Missile.tscn"),
+		"max_speed": 1500,
+		"rotation_speed": 0.1,
+		"max_bank_angle": 10,
+		"accel": 8,
+		"drag": 4,
+		"max_health": 400,
+		"fire_rate": 10,
+		"special_cooldown": 2,
+		"bullet_velocity": 1600,
+		"bullet_damage": 20,
+		"bullet_range": 2000,
+		"bullet_radius": 200
+	},
+	"Pi_Fighter" : {
+		"description": "A highly maneuverable dog-fighter. 
+						Slower top speed but fast acceleration and banking. 
+						Reducing power budget for shields allows greater firepower for main guns, 
+						but the lack of a targetting droid means missiles take longet to recharge.",
+		"animation_frames": preload("res://fighter1.tres"),
+		"bullet_scene": preload("res://bullet.tscn"),
+		"missile_scene": preload("res://Missile.tscn"),
+		"max_speed": 800,
+		"rotation_speed": 0.3,
+		"max_bank_angle": 10,
+		"accel": 20,
+		"drag": 8,
+		"max_health": 100,
+		"fire_rate": 60,
+		"special_cooldown": 10,
+		"bullet_velocity": 2000,
+		"bullet_damage": 20,
+		"bullet_range": 1500,
+		"bullet_radius": 150
+	}
+}
 
 func get_input():
 	if abs(rotation_direction + (Input.get_axis("left", "right") * rotation_speed)) < max_bank_angle: ##Limit max turn
@@ -43,12 +94,40 @@ func get_input():
 	velocity = transform.y * speed * -1 ##Track forward speed
 
 func _ready():
+	assign_values(ship_type)
 	add_to_group("player_units")
 	screenSize = Vector2(10000, 10000)
 	if health_bar:
 		health_bar.value = float(health) / float(max_health) * 100
 		health_bar.add_theme_color_override("font_color", Color(0, 0, 0))  # Ensures text stays black
 		health_bar.modulate = Color(0,1,0,2)
+		
+func assign_values(type: String):
+	if type in player_types:
+		var config = player_types[type]
+		
+
+		# Assign stats
+		max_speed = config["max_speed"]
+		rotation_speed = config["rotation_speed"]
+		max_bank_angle = config["max_bank_angle"]
+		accel = config["accel"]
+		drag = config["drag"]
+		max_health = config["max_health"]
+		fire_rate = config["fire_rate"]
+		special_cooldown = config["special_cooldown"]
+		bullet_velocity = config["bullet_velocity"]
+		bullet_damage = config["bullet_damage"]
+		bullet_range = config["bullet_range"]
+		bullet_radius = config["bullet_radius"]
+
+		# Assign visuals & weapons
+		$AnimatedSprite2D.frames = config["animation_frames"]
+		bullet_scene = config["bullet_scene"]
+		missile_scene = config["missile_scene"]
+
+		# Set health properly after reassignment
+		health = max_health
 
 func _physics_process(delta):
 	get_input()
@@ -80,14 +159,21 @@ func _process(delta):
 		shoot_timer -= delta
 		if shoot_timer <= 0:
 			shoot()
-			shoot_timer = 1.0 / fire_rate	
+			shoot_timer = 1.0 / fire_rate
+	if (special_timer <= 0):
+		if Input.is_action_pressed("special"):
+			special_timer += special_cooldown
+			special()
+	else:
+		special_timer -= delta
+	if missile_timer:
+		missile_timer.value = float(special_timer) / float(special_cooldown) * 100
+		
 	if health < max_health:
 		var damage_level = 1.0 - float(health) / float(max_health)  # Determines severity
 		var spawn_chance = damage_level * delta * 6  # Increased multiplier for lower health
 		if randf() < spawn_chance:
 			spawn_damage_effect()
-
-
 
 func shoot():
 	var bullet = bullet_scene.instantiate()
@@ -99,6 +185,14 @@ func shoot():
 	
 	get_parent().add_child(bullet)
  # Add bullet to the scene
+
+func special():
+	var special = missile_scene.instantiate()
+	var spawn_offset = Vector2(0, -100).rotated(rotation)
+	special.setup(global_position+spawn_offset, rotation, (speed+bullet_velocity), bullet_damage*2, bullet_range*5, bullet_radius)
+	special.target_group = "enemies"
+	special.turn_speed = 5
+	get_parent().add_child(special)
 	
 func spawn_damage_effect():
 	var explosion = EXPLOSION_SCENE.instantiate()

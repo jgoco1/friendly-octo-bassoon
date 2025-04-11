@@ -8,7 +8,7 @@ var traveled_distance: float = 0.0
 var max_range: float
 
 func _ready():
-	connect("body_entered", Callable(self, "_on_body_entered"))
+	#connect("body_entered", Callable(self, "_on_body_entered"))
 	add_to_group("player_bullets")
 	connect("area_entered", Callable(self, "_on_area_entered"))
 
@@ -20,13 +20,13 @@ func _process(delta):
 	if traveled_distance >= max_range:
 		explode()
 
-func setup(start_pos, angle, velocity, dmg, range, explosion_radius):
+func setup(start_pos, angle, velocity, dmg, m_range, explosion_radius):
 	global_position = start_pos
 	rotation = angle
 	direction = Vector2.UP.rotated(rotation)
 	speed = velocity
 	damage = dmg
-	max_range = range
+	max_range = m_range
 	self.explosion_radius = explosion_radius
 
 func _on_body_entered(body):
@@ -40,8 +40,9 @@ func _on_area_entered(area):
 func explode():
 	var explosion = preload("res://Explosion.tscn").instantiate()
 	explosion.global_position = global_position
+	explosion.scale *= explosion_radius/100
 	get_parent().add_child(explosion)
-
+	
 	for area in get_tree().get_nodes_in_group("enemies") + get_tree().get_nodes_in_group("player_units"):
 		if area.global_position.distance_to(global_position) <= explosion_radius:
 			area.take_damage(damage)

@@ -1,7 +1,7 @@
 extends Area2D
 
 @export var speed: float = 200  # Missile speed
-@export var turn_speed: float = 5  # How fast it adjusts course
+@export var turn_speed: float = 3  # How fast it adjusts course
 @export var target_group: String = "player_units"  # Determines what it locks onto
 @export var explosion_scene: PackedScene  # Assign an explosion effect
 @export var damage: int = 50
@@ -12,12 +12,12 @@ var max_range = 1000
 var traveled_distance = 0
 var explosion_radius: float
 
-func setup(start_pos, angle, velocity, dmg, range, explosion_radius):
+func setup(start_pos, angle, velocity, dmg, m_range, explosion_radius):
 	global_position = start_pos + Vector2.UP.rotated(angle) * 40  # Spawn slightly ahead
 	rotation = angle
 	speed = velocity
 	damage = dmg
-	max_range = range
+	max_range = m_range
 	self.explosion_radius = explosion_radius
 
 	# Determine the target group based on the firing unit
@@ -38,7 +38,6 @@ func _process(delta):
 	find_target()
 	var movement_target: Vector2
 	if target:
-		print("target found")
 		movement_target = target.global_position
 	move_forward(delta)
 	# Determine rotation adjustment using cross product
@@ -54,10 +53,14 @@ func _process(delta):
 
 func find_target():
 	var possible_targets = get_tree().get_nodes_in_group(target_group)
-	target = get_tree().get_nodes_in_group(target_group)
+	
 	if possible_targets.size() > 0:
 		target = possible_targets.reduce(func(a, b):
-			return a.global_position.distance_to(global_position) < b.global_position.distance_to(global_position) if a else b
+			if !is_instance_valid(a):
+				return b
+			if !is_instance_valid(b):
+				return a
+			return a if a.global_position.distance_to(global_position) < b.global_position.distance_to(global_position) else b
 		)
 
 func move_forward(delta):

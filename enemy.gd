@@ -1,7 +1,7 @@
 extends Area2D
 
 
-var enemy_points = {"fighter": 100, "interceptor": 200}
+#var enemy_points = {"fighter": 100, "interceptor": 200}
 var smoke_timer = 0.0
 var smoke_rate = 1.0  # Adjust rate for smoke emission
 
@@ -14,7 +14,7 @@ var smoke_rate = 1.0  # Adjust rate for smoke emission
 @export var max_health: int = 100  # Set in Inspector for different enemy types
 @export var rotation_speed: float = 2  # Speed at which enemies adjust their heading
 var health: int = max_health
-var play_area = Rect2(100, 100, 5000, 5000)  # Define playable space
+var play_area = Rect2(100, 100, 10000, 10000)  # Define playable space
 
 var fire_rate = 0.5  # Reduce cooldown (shoots faster)
 var shoot_timer = 0.0
@@ -34,9 +34,9 @@ func _process(delta):
 		movement_target = target.global_position
 	else:
 		movement_target = wander_target
-		if global_position.distance_to(wander_target) < 20:
+		if global_position.distance_to(wander_target) < 50:
 			set_random_target()
-
+	
 	move_forward(delta)
 	# Determine rotation adjustment using cross product
 	var forward_direction = Vector2.UP.rotated(rotation)
@@ -143,8 +143,7 @@ func emit_smoke():
 	get_parent().add_child(smoke)
 	
 func die():
-	GameManager.add_score(100)  # Award points
-
+	GameManager.add_score(max_health)  # Award points
 	var explosion = explosion_scene.instantiate()
 	explosion.global_position = global_position
 	explosion.scale *= randf_range(3,5)
