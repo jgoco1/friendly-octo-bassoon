@@ -12,13 +12,13 @@ var max_range = 1000
 var traveled_distance = 0
 var explosion_radius: float
 
-func setup(start_pos, angle, velocity, dmg, m_range, explosion_radius):
+func setup(start_pos, angle, velocity, dmg, m_range, m_explosion_radius):
 	global_position = start_pos + Vector2.UP.rotated(angle) * 40  # Spawn slightly ahead
 	rotation = angle
 	speed = velocity
 	damage = dmg
 	max_range = m_range
-	self.explosion_radius = explosion_radius
+	self.explosion_radius = m_explosion_radius
 
 	# Determine the target group based on the firing unit
 	var parent = get_parent()

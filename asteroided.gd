@@ -1,4 +1,5 @@
 extends Node2D
+var selected_ship_type = "default"  # Default starting selection
 
 var enemy_data = {
 	"fighter1": {
@@ -36,17 +37,7 @@ var enemy_count = 0
 var max_enemies = 10  # Adjust based on desired difficulty
 var respawn_min_time = 2.0  # Minimum respawn delay
 var respawn_max_time = 6.0  # Maximum respawn delay
-
-func enemy_destroyed():
-	enemy_count - 1
-	check_respawn()
 	
-func check_respawn():
-	if enemy_count < max_enemies:
-		var respawn_delay = randf_range(respawn_min_time, respawn_max_time)
-		spawn_enemy("fighter1")
-		#get_tree().create_timer(respawn_delay).timeout.connect(spawn_enemy("fighter1"))
-		
 func spawn_enemy(type_or_config):
 	var safe_distance = 800  # Minimum distance from player
 	var player_position = get_node("/root/Asteroided/Player").global_position

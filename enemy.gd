@@ -34,7 +34,7 @@ func _process(delta):
 		movement_target = target.global_position
 	else:
 		movement_target = wander_target
-		if global_position.distance_to(wander_target) < 50:
+		if global_position.distance_to(wander_target) < 40:
 			set_random_target()
 	
 	move_forward(delta)

@@ -20,14 +20,14 @@ func _process(delta):
 	if traveled_distance >= max_range:
 		explode()
 
-func setup(start_pos, angle, velocity, dmg, m_range, explosion_radius):
+func setup(start_pos, angle, velocity, dmg, m_range, m_explosion_radius):
 	global_position = start_pos
 	rotation = angle
 	direction = Vector2.UP.rotated(rotation)
 	speed = velocity
 	damage = dmg
 	max_range = m_range
-	self.explosion_radius = explosion_radius
+	self.explosion_radius = m_explosion_radius
 
 func _on_body_entered(body):
 	if body.is_in_group("enemies") or body.is_in_group("player_units"):

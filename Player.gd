@@ -1,7 +1,7 @@
 extends CharacterBody2D
 
 var description:String = "A ship"
-var ship_type = "Pi_Fighter"
+#var ship_type = "Pi_Fighter"
 
 const EXPLOSION_SCENE = preload("res://Explosion.tscn")
 @export var max_speed = 800 ##Max top speed
@@ -33,17 +33,18 @@ var bullet_velocity = 1600
 var bullet_damage = 20
 var bullet_range = 2000
 var bullet_radius = 200
+var spread = .05
 ##max_speed, rotation_speed, max_bank_angle, accel, drag
 ##bullet_scene, missile_scene
 ##max_health, fire_rate, special_cooldown, bullet_velocity, bullet_damage, bullet_range, bullet_radius
 
 var player_types = {
-	"default" : {
+	"Interceptor" : {
 		"description": "Interceptor - Well rounded choice",
 		"animation_frames": preload("res://interceptor1.tres"),
 		"bullet_scene": preload("res://bullet.tscn"),
 		"missile_scene": preload("res://Missile.tscn"),
-		"max_speed": 1500,
+		"max_speed": 1000,
 		"rotation_speed": 0.1,
 		"max_bank_angle": 10,
 		"accel": 8,
@@ -53,7 +54,7 @@ var player_types = {
 		"special_cooldown": 2,
 		"bullet_velocity": 1600,
 		"bullet_damage": 20,
-		"bullet_range": 2000,
+		"bullet_range": 2500,
 		"bullet_radius": 200
 	},
 	"Pi_Fighter" : {
@@ -64,7 +65,7 @@ var player_types = {
 		"animation_frames": preload("res://fighter1.tres"),
 		"bullet_scene": preload("res://bullet.tscn"),
 		"missile_scene": preload("res://Missile.tscn"),
-		"max_speed": 800,
+		"max_speed": 600,
 		"rotation_speed": 0.3,
 		"max_bank_angle": 10,
 		"accel": 20,
@@ -74,7 +75,7 @@ var player_types = {
 		"special_cooldown": 10,
 		"bullet_velocity": 2000,
 		"bullet_damage": 20,
-		"bullet_range": 1500,
+		"bullet_range": 2000,
 		"bullet_radius": 150
 	}
 }
@@ -94,7 +95,7 @@ func get_input():
 	velocity = transform.y * speed * -1 ##Track forward speed
 
 func _ready():
-	assign_values(ship_type)
+	assign_values(GameManager.selected_ship_type)  # Use the selected ship
 	add_to_group("player_units")
 	screenSize = Vector2(10000, 10000)
 	if health_bar:
@@ -163,7 +164,7 @@ func _process(delta):
 	if (special_timer <= 0):
 		if Input.is_action_pressed("special"):
 			special_timer += special_cooldown
-			special()
+			use_special()
 	else:
 		special_timer -= delta
 	if missile_timer:
@@ -171,7 +172,7 @@ func _process(delta):
 		
 	if health < max_health:
 		var damage_level = 1.0 - float(health) / float(max_health)  # Determines severity
-		var spawn_chance = damage_level * delta * 6  # Increased multiplier for lower health
+		var spawn_chance = damage_level * delta * 12  # Increased multiplier for lower health
 		if randf() < spawn_chance:
 			spawn_damage_effect()
 
@@ -181,12 +182,12 @@ func shoot():
 	var spawn_offset = Vector2(gun, -100).rotated(rotation) # Adjust the "-40" to change distance
 	gun *= -1
 	# Assign weapon stats dynamically
-	bullet.setup(global_position+spawn_offset, rotation, (speed + bullet_velocity), bullet_damage, bullet_range, bullet_radius)  # Example values
+	bullet.setup(global_position+spawn_offset,(rotation + randf_range(-spread,spread) ), (speed + bullet_velocity), bullet_damage, bullet_range, bullet_radius)  # Example values
 	
 	get_parent().add_child(bullet)
  # Add bullet to the scene
 
-func special():
+func use_special():
 	var special = missile_scene.instantiate()
 	var spawn_offset = Vector2(0, -100).rotated(rotation)
 	special.setup(global_position+spawn_offset, rotation, (speed+bullet_velocity), bullet_damage*2, bullet_range*5, bullet_radius)
@@ -199,6 +200,7 @@ func spawn_damage_effect():
 	# Randomize position and scale
 	explosion.global_position = global_position + Vector2(randf_range(-20, 20), randf_range(-20, 20))
 	explosion.scale *= randf_range(0.5, 1.5)  # Random scale between 0.5x and 1.5x
+	explosion.modulate = Color(0.5, 0.5, 0.5, randf_range(.3,1))
 	get_parent().add_child(explosion)
 	
 func take_damage(amount):
