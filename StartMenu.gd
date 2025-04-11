@@ -10,7 +10,6 @@ var selected_index = 0  # Tracks current selection
 @onready var start_button = $StartButton
 @onready var ship_preview = $ShipPreview  # Reference AnimatedSprite2D
 
-
 func _ready():
 	update_ship_display()
 	prev_button.connect("pressed", Callable(self, "_on_prev_pressed"))

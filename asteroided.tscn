@@ -57,11 +57,12 @@ text = "Score:"
 horizontal_alignment = 1
 
 [node name="MissileTimer" type="ProgressBar" parent="Player/Camera2D/CanvasLayer"]
-modulate = Color(0.45098, 0, 0, 1)
+modulate = Color(0.796078, 0, 0, 1)
 offset_left = 1884.0
 offset_top = 684.0
 offset_right = 1913.0
 offset_bottom = 1078.0
+tooltip_text = "Missile"
 fill_mode = 3
 show_percentage = false
 

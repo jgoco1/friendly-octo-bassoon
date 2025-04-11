@@ -1,12 +1,11 @@
 extends CharacterBody2D
 
 var description:String = "A ship"
-#var ship_type = "Pi_Fighter"
 
 const EXPLOSION_SCENE = preload("res://Explosion.tscn")
 var max_speed = 800 ##Max top speed
 var rotation_speed = 0.2 ## How quickly it turns
-@export var rtc_speed = .05 ##How quickly it returns to going straight
+@export var rtc_speed = .1 ##How quickly it returns to going straight
 var max_bank_angle = 10 ##Max turn speed
 var accel = 10 ##How Quickly it accelerates
 var drag = 5 ##How quickly the ship decelerates
@@ -53,10 +52,10 @@ var player_types = {
 		"max_bank_angle": 10,
 		"accel": 10,
 		"drag": 4,
-		"max_health": 400,
+		"max_health": 300,
 		"fire_rate": 10,
 		"special_cooldown": 2,
-		"bullet_velocity": 1600,
+		"bullet_velocity": 2400,
 		"bullet_damage": 20,
 		"bullet_range": 2500,
 		"bullet_radius": 200
@@ -75,9 +74,9 @@ var player_types = {
 		"accel": 20,
 		"drag": 8,
 		"max_health": 100,
-		"fire_rate": 60,
+		"fire_rate": 50,
 		"special_cooldown": 10,
-		"bullet_velocity": 2000,
+		"bullet_velocity": 3000,
 		"bullet_damage": 20,
 		"bullet_range": 2000,
 		"bullet_radius": 150
@@ -118,7 +117,6 @@ func assign_values(type: String):
 	if type in player_types:
 		var config = player_types[type]
 		
-
 		# Assign stats
 		max_speed = config["max_speed"]
 		rotation_speed = config["rotation_speed"]
@@ -149,7 +147,8 @@ func _physics_process(delta):
 
 	position.x = clamp(position.x, 0, screenSize.x)
 	position.y = clamp(position.y, 0, screenSize.y)
-	$AnimatedSprite2D.flip_v = false
+	
+	$AnimatedSprite2D.flip_h = false
 	if(velocity) :
 		if(rotation_direction < 0):
 			$AnimatedSprite2D.flip_h = true
@@ -211,7 +210,7 @@ func shoot():
 func use_special():
 	var special = missile_scene.instantiate()
 	var spawn_offset = Vector2(0, -100).rotated(rotation)
-	special.setup(global_position+spawn_offset, rotation, (speed+bullet_velocity), bullet_damage*2, bullet_range*5, bullet_radius)
+	special.setup(global_position+spawn_offset, rotation, (speed+(bullet_velocity/1.5)), bullet_damage*3, bullet_range*5, bullet_radius)
 	special.target_group = "enemies"
 	special.turn_speed = 5
 	get_parent().add_child(special)
