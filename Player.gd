@@ -60,7 +60,7 @@ var player_types = {
 		"max_health": 300,
 		"fire_rate": 2,
 		"special_cooldown": 2,
-		"bullet_velocity": 1200,
+		"bullet_velocity": 1800,
 		"bullet_damage": 20,
 		"bullet_range": 2500,
 		"bullet_spread": .02,

@@ -14,7 +14,7 @@ var smoke_rate = 1.0  # Adjust rate for smoke emission
 @export var max_health: int = 100  # Set in Inspector for different enemy types
 @export var rotation_speed: float = 2  # Speed at which enemies adjust their heading
 var health: int = max_health
-var play_area = Rect2(100, 100, 10000, 10000)  # Define playable space
+var play_area = Rect2(100, 100, 20000, 20000)  # Define playable space
 
 var fire_rate = 0.5  # Reduce cooldown (shoots faster)
 var shoot_timer = 0.0
