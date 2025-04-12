@@ -12,7 +12,7 @@ var enemy_data = {
 		"bullet_range": 1200,
 		"bullet_explosion_radius": 80,
 		"fire_rate": 1.0, #Time between shots
-		"max_health": 100,
+		"max_health": 50,
 		"targeting_range" : 1000
 	},
 	"interceptor1": {
@@ -20,13 +20,26 @@ var enemy_data = {
 		"speed": 1000,
 		"turn_radius": 1,
 		"weapon_scene": preload("res://Missile.tscn"),
-		"bullet_velocity": 1000,
+		"bullet_velocity": 1600,
 		"bullet_damage": 25,
-		"bullet_range": 5000,
+		"bullet_range": 10000,
 		"bullet_explosion_radius": 160,
-		"fire_rate": 4,
-		"max_health": 200,
-		"targeting_range" : 2000
+		"fire_rate": 6,
+		"max_health": 300,
+		"targeting_range" : 10000
+	},
+	"fighter2": {
+		"animation_frames": preload("res://xwingv1.tres"),
+		"speed": 750,
+		"turn_radius": 2,
+		"weapon_scene": preload("res://bullet.tscn"),
+		"bullet_velocity": 1500,
+		"bullet_damage": 15,
+		"bullet_range": 800,
+		"bullet_explosion_radius": 60,
+		"fire_rate": .5,
+		"max_health": 100,
+		"targeting_range" : 2500
 	}
 }
 
@@ -34,7 +47,7 @@ var spawn_area = Rect2(300, 300, 1200, 800)  # Move closer to player view
 var enemy_scene = preload("res://enemy.tscn")
 
 var enemy_count = 0
-var max_enemies = 10  # Adjust based on desired difficulty
+var max_enemies = 20  # Adjust based on desired difficulty
 var respawn_min_time = 2.0  # Minimum respawn delay
 var respawn_max_time = 6.0  # Maximum respawn delay
 	
@@ -43,7 +56,7 @@ func spawn_enemy(type_or_config):
 	var player_position = get_node("/root/Asteroided/Player").global_position
 	var spawn_position = Vector2.ZERO
 	while true:
-		spawn_position = Vector2(randf_range(0, 10000), randf_range(0, 10000))
+		spawn_position = Vector2(randf_range(0, 20000), randf_range(0, 20000))
 		
 		# Ensure enemy spawns outside player's view range
 		if player_position.distance_to(spawn_position) > safe_distance:
@@ -70,7 +83,7 @@ func spawn_random_enemy():
 	var spawn_position = Vector2.ZERO
 
 	while true:
-		spawn_position = Vector2(randf_range(0, 5000), randf_range(0, 5000))
+		spawn_position = Vector2(randf_range(0, 20000), randf_range(0, 20000))
 		
 		# Ensure enemy spawns outside player's view range
 		if player_position.distance_to(spawn_position) > safe_distance:
@@ -79,8 +92,10 @@ func spawn_random_enemy():
 	var enemy = preload("res://enemy.tscn").instantiate()
 	enemy.global_position = spawn_position
 	var rand = randf_range(0,100)
-	if rand < 90:
+	if rand < 70:
 		enemy.setup(enemy_data["fighter1"])
+	elif rand < 90:
+		enemy.setup(enemy_data["fighter2"])
 	else:
 		enemy.setup(enemy_data["interceptor1"])
 	call_deferred("add_child", enemy)

@@ -19,5 +19,5 @@ shape = SubResource("RectangleShape2D_qi2p4")
 rotation = 3.14159
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
-scale = Vector2(4, 4)
+scale = Vector2(3, 3)
 sprite_frames = ExtResource("3_qi2p4")

@@ -10,6 +10,7 @@ var max_bank_angle = 10 ##Max turn speed
 var accel = 10 ##How Quickly it accelerates
 var drag = 5 ##How quickly the ship decelerates
 
+@onready var bullet_fire_sound = preload("res://sound/laserShoot.wav")
 @onready var bullet_scene = preload("res://bullet.tscn")
 @onready var missile_scene = preload("res://Missile.tscn")
 @onready var camera = $Camera2D
@@ -32,33 +33,61 @@ var shooting = false
 var shoot_timer = 0.0
 var special_cooldown = 3
 var special_timer = 0.0
+var num_spcl = 1
 var bullet_velocity = 1600
 var bullet_damage = 20
 var bullet_range = 2000
 var bullet_radius = 200
+var bullet_spread = .05
 var spread = .05
 ##max_speed, rotation_speed, max_bank_angle, accel, drag
 ##bullet_scene, missile_scene
 ##max_health, fire_rate, special_cooldown, bullet_velocity, bullet_damage, bullet_range, bullet_radius
 
 var player_types = {
-	"Interceptor" : {
+	"Bomber" : {
 		"description": "Interceptor - Well rounded choice",
 		"animation_frames": preload("res://interceptor1.tres"),
 		"bullet_scene": preload("res://bullet.tscn"),
 		"missile_scene": preload("res://Missile.tscn"),
-		"max_speed": 1000,
-		"rotation_speed": 0.2,
-		"max_bank_angle": 10,
-		"accel": 10,
+		"collision_scale" : 3,
+		"sprite_scale": 3,
+		"max_speed": 1300,
+		"rotation_speed": 0.1,
+		"max_bank_angle": 13,
+		"accel": 8,
 		"drag": 4,
 		"max_health": 300,
-		"fire_rate": 10,
+		"fire_rate": 2,
 		"special_cooldown": 2,
-		"bullet_velocity": 2400,
+		"bullet_velocity": 1200,
 		"bullet_damage": 20,
 		"bullet_range": 2500,
+		"bullet_spread": .02,
+		"num_spcl" : 2,
 		"bullet_radius": 200
+	},
+	"Cross_Wing" : {
+		"description": "A starfighter",
+		"animation_frames": preload("res://xwingv1.tres"),
+		"bullet_scene": preload("res://bullet.tscn"),
+		"missile_scene": preload("res://Missile.tscn"),
+		"collision_scale" : 3,
+		"sprite_scale": 3,
+		"max_speed": 900,
+		"rotation_speed": 0.25,
+		"max_bank_angle": 10,
+		"accel": 15,
+		"drag": 6,
+		"max_health": 150,
+		"fire_rate": 20,
+		"special_cooldown": 4,
+		"bullet_velocity": 2400,
+		"bullet_damage": 15,
+		"bullet_range": 2500,
+		"bullet_spread": .1,
+		"num_spcl" : 1,
+		"bullet_radius": 100
 	},
 	"Pi_Fighter" : {
 		"description": "A highly maneuverable dog-fighter. 
@@ -68,17 +97,21 @@ var player_types = {
 		"animation_frames": preload("res://fighter1.tres"),
 		"bullet_scene": preload("res://bullet.tscn"),
 		"missile_scene": preload("res://Missile.tscn"),
-		"max_speed": 800,
+		"collision_scale" : 3,
+		"sprite_scale": 3,
+		"max_speed": 700,
 		"rotation_speed": 0.3,
 		"max_bank_angle": 10,
 		"accel": 20,
 		"drag": 8,
 		"max_health": 100,
-		"fire_rate": 50,
+		"fire_rate": 150,
 		"special_cooldown": 10,
 		"bullet_velocity": 3000,
-		"bullet_damage": 20,
+		"bullet_damage": 10,
 		"bullet_range": 2000,
+		"bullet_spread": .08,
+		"num_spcl" : 1,
 		"bullet_radius": 150
 	}
 }
@@ -107,7 +140,7 @@ func get_input():
 func _ready():
 	assign_values(GameManager.selected_ship_type)  # Use the selected ship
 	add_to_group("player_units")
-	screenSize = Vector2(10000, 10000)
+	screenSize = Vector2(20000, 20000)
 	if health_bar:
 		health_bar.value = float(health) / float(max_health) * 100
 		health_bar.add_theme_color_override("font_color", Color(0, 0, 0))  # Ensures text stays black
@@ -130,11 +163,19 @@ func assign_values(type: String):
 		bullet_damage = config["bullet_damage"]
 		bullet_range = config["bullet_range"]
 		bullet_radius = config["bullet_radius"]
+		spread = config["bullet_spread"]
+		num_spcl = config["num_spcl"]
 
 		# Assign visuals & weapons
 		$AnimatedSprite2D.frames = config["animation_frames"]
 		bullet_scene = config["bullet_scene"]
 		missile_scene = config["missile_scene"]
+
+		var sprite_scale = config.get("sprite_scale", 1.0)
+		var collision_scale = config.get("collision_scale", 1.0)
+
+		$AnimatedSprite2D.scale = Vector2(sprite_scale, sprite_scale)
+		$CollisionShape2D.scale = Vector2(collision_scale, collision_scale)
 
 		# Set health properly after reassignment
 		health = max_health
@@ -199,20 +240,37 @@ func _process(delta):
 func shoot():
 	var bullet = bullet_scene.instantiate()
 	# Offset position so the bullet spawns slightly ahead of the player
-	var spawn_offset = Vector2(gun, -100).rotated(rotation) # Adjust the "-40" to change distance
+	var spawn_offset = Vector2(gun, -120).rotated(rotation) # Adjust the "-40" to change distance
 	gun *= -1
 	# Assign weapon stats dynamically
-	bullet.setup(global_position+spawn_offset,(rotation + randf_range(-spread,spread) ), (speed + bullet_velocity), bullet_damage, bullet_range, bullet_radius)  # Example values
-	
+	bullet.setup(global_position+spawn_offset,(rotation + randf_range(-spread,spread) ), ((speed*1.5) + bullet_velocity), bullet_damage, bullet_range, bullet_radius)  # Example values
 	get_parent().add_child(bullet)
- # Add bullet to the scene
+	 # Add bullet to the scene
+	"""var sound_player = AudioStreamPlayer.new()
+	sound_player.stream = bullet_fire_sound
+	add_child(sound_player)
+	sound_player.play()
+	await sound_player.finished
+	sound_player.queue_free()"""
 
 func use_special():
+	#var num_spcl = player_types[GameManager.selected_ship_type].get("num_spcl", 1)
+	var missile_delay = 0.2  # Delay between missile launches
+
+	for i in range(num_spcl):
+		await get_tree().create_timer(missile_delay * i).timeout  # Delay per missile
+		launch_special(i, num_spcl)
+		
+func launch_special(index, total):
 	var special = missile_scene.instantiate()
-	var spawn_offset = Vector2(0, -100).rotated(rotation)
-	special.setup(global_position+spawn_offset, rotation, (speed+(bullet_velocity/1.5)), bullet_damage*3, bullet_range*5, bullet_radius)
+
+	# Offset missiles slightly for variation
+	var offset = Vector2(index * 10 - (total * 5), -100).rotated(rotation)
+
+	special.setup(global_position + offset, rotation, (speed + (bullet_velocity / 1.5)), bullet_damage * 3, bullet_range * 5, bullet_radius)
 	special.target_group = "enemies"
 	special.turn_speed = 5
+
 	get_parent().add_child(special)
 	
 func spawn_damage_effect():

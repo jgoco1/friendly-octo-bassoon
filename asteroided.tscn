@@ -2,12 +2,12 @@
 
 [ext_resource type="Script" uid="uid://cg2wjn7mnd5fb" path="res://asteroided.gd" id="1_mcuy4"]
 [ext_resource type="Script" uid="uid://d1vupq78shn54" path="res://Player.gd" id="2_mcuy4"]
-[ext_resource type="SpriteFrames" uid="uid://dm78p44ghn41p" path="res://asteroided.tres" id="2_qhjnf"]
+[ext_resource type="SpriteFrames" uid="uid://cyrko2ajhypqg" path="res://xwingv1.tres" id="3_cd1lo"]
 [ext_resource type="Script" uid="uid://bwgbupv3ffq8" path="res://parallax_background.gd" id="4_607w6"]
 [ext_resource type="Texture2D" uid="uid://cvueabnay52r6" path="res://Untitled.png" id="5_cd1lo"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_n5ew4"]
-size = Vector2(38.6666, 86)
+size = Vector2(65.3332, 64.6666)
 
 [node name="Asteroided" type="Node2D"]
 script = ExtResource("1_mcuy4")
@@ -17,14 +17,13 @@ position = Vector2(5000, 3000)
 script = ExtResource("2_mcuy4")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Player"]
-position = Vector2(-2, 2.5)
+position = Vector2(1, -0.5)
 scale = Vector2(1.5, 1.5)
 shape = SubResource("RectangleShape2D_n5ew4")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="Player"]
-scale = Vector2(4, 4)
-sprite_frames = ExtResource("2_qhjnf")
-animation = &"Med_Bank"
+scale = Vector2(3, 3)
+sprite_frames = ExtResource("3_cd1lo")
 
 [node name="Camera2D" type="Camera2D" parent="Player"]
 zoom = Vector2(0.5, 0.5)
@@ -72,6 +71,6 @@ script = ExtResource("4_607w6")
 [node name="ParallaxLayer" type="ParallaxLayer" parent="ParallaxBackground"]
 
 [node name="Sprite2D" type="Sprite2D" parent="ParallaxBackground/ParallaxLayer"]
-position = Vector2(4468, 3233)
-scale = Vector2(20, 20)
+scale = Vector2(40, 40)
 texture = ExtResource("5_cd1lo")
+centered = false

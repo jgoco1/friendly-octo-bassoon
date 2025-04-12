@@ -3,9 +3,14 @@ var selected_ship_type = "default"  # Default starting selection
 
 
 var player_types = {
-	"Interceptor": {
-		"description": "Interceptor - Well rounded choice",
+	"Bomber": {
+		"description": "Bomber - Fast top speed but with poor maneuverability and main firepower,
+						it's main strength comes from its ability to fire a volley of missiles often.",
 		"animation_frames": preload("res://interceptor1.tres")
+	},
+	"Cross_Wing": {
+		"description": "A starfighter",
+		"animation_frames": preload("res://xwingv1.tres")
 	},
 	"Pi_Fighter": {
 		"description": "A highly maneuverable dog-fighter. 

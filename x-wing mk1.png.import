@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bqotvbmyiiy3v"
-path="res://.godot/imported/New Piskel (1).png-aa190bd7eaf77cd10e10a600010083f1.ctex"
+uid="uid://dwukpd3pl473q"
+path="res://.godot/imported/x-wing mk1.png-b96d19f2e37b17b3fef362563bc5c51c.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://New Piskel (1).png"
-dest_files=["res://.godot/imported/New Piskel (1).png-aa190bd7eaf77cd10e10a600010083f1.ctex"]
+source_file="res://x-wing mk1.png"
+dest_files=["res://.godot/imported/x-wing mk1.png-b96d19f2e37b17b3fef362563bc5c51c.ctex"]
 
 [params]
 
