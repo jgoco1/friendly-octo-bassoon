@@ -13,7 +13,7 @@ var enemy_data = {
 		"bullet_explosion_radius": 80,
 		"fire_rate": 1.0, #Time between shots
 		"max_health": 50,
-		"targeting_range" : 1000
+		"targeting_range" : 1500
 	},
 	"interceptor1": {
 		"animation_frames": preload("res://interceptor1.tres"),
@@ -35,7 +35,7 @@ var enemy_data = {
 		"weapon_scene": preload("res://bullet.tscn"),
 		"bullet_velocity": 1500,
 		"bullet_damage": 15,
-		"bullet_range": 800,
+		"bullet_range": 1500,
 		"bullet_explosion_radius": 60,
 		"fire_rate": .5,
 		"max_health": 100,

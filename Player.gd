@@ -10,16 +10,19 @@ var max_bank_angle = 10 ##Max turn speed
 var accel = 10 ##How Quickly it accelerates
 var drag = 5 ##How quickly the ship decelerates
 
-@onready var bullet_fire_sound = preload("res://sound/laserShoot.wav")
+@onready var bullet_fire_player = AudioStreamPlayer.new()
+#@onready var low_health_player = AudioStreamPlayer.new()
+
 @onready var bullet_scene = preload("res://bullet.tscn")
 @onready var missile_scene = preload("res://Missile.tscn")
 @onready var camera = $Camera2D
 var zoom_speed = 2000  # Adjust zoom speed
-var min_zoom = 0.5  # Minimum zoom level (more zoomed in)
-var max_zoom = 100.0  # Maximum zoom level (zoomed out)
+var min_zoom = 0.3  # Minimum zoom level (more zoomed in)
+var max_zoom = 500.0  # Maximum zoom level (zoomed out)
 @onready var health_bar = get_node("Camera2D/CanvasLayer/HealthBar")
 @onready var score_label = get_node("Camera2D/CanvasLayer/Score")
 @onready var missile_timer = get_node("Camera2D/CanvasLayer/MissileTimer")
+@onready var control = get_node("Camera2D/CanvasLayer/Control")
 var max_health: int = 100
 var health: int = max_health
 
@@ -140,12 +143,23 @@ func get_input():
 func _ready():
 	assign_values(GameManager.selected_ship_type)  # Use the selected ship
 	add_to_group("player_units")
+	var display_size = get_viewport_rect().size  # Get current screen resolution
+	var base_zoom = display_size / Vector2(1920, 1080)  # Normalize zoom based on a 1080p reference
+	camera.zoom = .4*base_zoom
 	screenSize = Vector2(20000, 20000)
 	if health_bar:
 		health_bar.value = float(health) / float(max_health) * 100
 		health_bar.add_theme_color_override("font_color", Color(0, 0, 0))  # Ensures text stays black
 		health_bar.modulate = Color(0,1,0,2)
-		
+	add_child(bullet_fire_player)
+	bullet_fire_player.stream = preload("res://sound/laserShoot.wav")
+	bullet_fire_player.volume_db = -1
+	#
+	#add_child(low_health_player)
+	#low_health_player.stream = preload("res://sound/alert-102266.mp3")
+	#low_health_player.volume_db = -15
+	
+
 func assign_values(type: String):
 	if type in player_types:
 		var config = player_types[type]
@@ -215,8 +229,10 @@ func _process(delta):
 
 	if Input.is_action_pressed("shoot"):
 		shooting = true
+		#bullet_fire_player.playing = true
 	else:
 		shooting = false
+		bullet_fire_player.playing = false
 	if shooting:
 		shoot_timer -= delta
 		if shoot_timer <= 0:
@@ -246,12 +262,10 @@ func shoot():
 	bullet.setup(global_position+spawn_offset,(rotation + randf_range(-spread,spread) ), ((speed*1.5) + bullet_velocity), bullet_damage, bullet_range, bullet_radius)  # Example values
 	get_parent().add_child(bullet)
 	 # Add bullet to the scene
-	"""var sound_player = AudioStreamPlayer.new()
-	sound_player.stream = bullet_fire_sound
-	add_child(sound_player)
-	sound_player.play()
-	await sound_player.finished
-	sound_player.queue_free()"""
+	 # Play bullet sound only if it's not already playing
+	#if not bullet_fire_player.playing:
+		#bullet_fire_player.play()
+
 
 func use_special():
 	#var num_spcl = player_types[GameManager.selected_ship_type].get("num_spcl", 1)
@@ -297,7 +311,10 @@ func take_damage(amount):
 	modulate = Color(1, 0.5, 0.5, 1)
 	await get_tree().create_timer(0.1).timeout
 	modulate = Color(1, 1, 1, 1)
-
+	#
+	#if health <= max_health and not low_health_player.playing:
+		#low_health_player.play()
+	
 	if health <= 0:
 		die()
 

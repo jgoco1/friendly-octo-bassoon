@@ -1,6 +1,6 @@
 [gd_resource type="SpriteFrames" load_steps=15 format=3 uid="uid://c6ok82d4tsuwd"]
 
-[ext_resource type="Texture2D" uid="uid://bxmiv8mt6ryop" path="res://New Piskel (1).png" id="1_unjq4"]
+[ext_resource type="Texture2D" uid="uid://bqotvbmyiiy3v" path="res://New Piskel (1).png" id="1_unjq4"]
 [ext_resource type="Texture2D" uid="uid://c8b5ansveqcoy" path="res://Speeder.png" id="2_3ed28"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_u0616"]

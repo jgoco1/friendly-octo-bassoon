@@ -36,10 +36,10 @@ rotation_smoothing_speed = 10.0
 anchors_preset = 2
 anchor_top = 1.0
 anchor_bottom = 1.0
-offset_left = 30.0
-offset_top = -54.0
-offset_right = 519.0
-offset_bottom = -2.0
+offset_left = 20.0
+offset_top = -1030.0
+offset_right = 520.0
+offset_bottom = -980.0
 grow_vertical = 0
 
 [node name="Score" type="Label" parent="Player/Camera2D/CanvasLayer"]
@@ -47,23 +47,122 @@ modulate = Color(0, 0, 0, 1)
 anchors_preset = 2
 anchor_top = 1.0
 anchor_bottom = 1.0
-offset_left = 30.0
-offset_top = -90.0
-offset_right = 94.0
-offset_bottom = -67.0
+offset_left = 20.0
+offset_top = -980.0
+offset_right = 84.0
+offset_bottom = -957.0
 grow_vertical = 0
 text = "Score:"
 horizontal_alignment = 1
 
 [node name="MissileTimer" type="ProgressBar" parent="Player/Camera2D/CanvasLayer"]
 modulate = Color(0.796078, 0, 0, 1)
-offset_left = 1884.0
-offset_top = 684.0
-offset_right = 1913.0
-offset_bottom = 1078.0
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = -1060.0
+offset_right = 520.0
+offset_bottom = -1035.0
+grow_vertical = 0
 tooltip_text = "Missile"
-fill_mode = 3
 show_percentage = false
+
+[node name="Control" type="Control" parent="Player/Camera2D/CanvasLayer"]
+visible = false
+custom_minimum_size = Vector2(300, 300)
+layout_mode = 3
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_top = -40.0
+offset_right = 40.0
+grow_vertical = 0
+
+[node name="WButton" type="Button" parent="Player/Camera2D/CanvasLayer/Control"]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 120.0
+offset_top = -280.0
+offset_right = 195.0
+offset_bottom = -205.0
+grow_vertical = 0
+action_mode = 0
+text = "W"
+
+[node name="*Button" type="Button" parent="Player/Camera2D/CanvasLayer/Control"]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 120.0
+offset_top = -180.0
+offset_right = 195.0
+offset_bottom = -105.0
+grow_vertical = 0
+text = "*"
+
+[node name="SButton" type="Button" parent="Player/Camera2D/CanvasLayer/Control"]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 120.0
+offset_top = -80.0
+offset_right = 195.0
+offset_bottom = -5.0
+grow_vertical = 0
+text = "S"
+
+[node name="AButton" type="Button" parent="Player/Camera2D/CanvasLayer/Control"]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = -180.0
+offset_right = 95.0
+offset_bottom = -105.0
+grow_vertical = 0
+text = "A"
+
+[node name="DButton" type="Button" parent="Player/Camera2D/CanvasLayer/Control"]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 215.0
+offset_top = -180.0
+offset_right = 290.0
+offset_bottom = -105.0
+grow_vertical = 0
+text = "D"
+
+[node name="QButton" type="Button" parent="Player/Camera2D/CanvasLayer/Control"]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = -280.0
+offset_right = 95.0
+offset_bottom = -205.0
+grow_vertical = 0
+text = "Q"
+
+[node name="EButton" type="Button" parent="Player/Camera2D/CanvasLayer/Control"]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 215.0
+offset_top = -280.0
+offset_right = 290.0
+offset_bottom = -205.0
+grow_vertical = 0
+text = "E"
 
 [node name="ParallaxBackground" type="ParallaxBackground" parent="."]
 script = ExtResource("4_607w6")

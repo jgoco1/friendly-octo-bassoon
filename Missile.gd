@@ -1,5 +1,6 @@
 extends Area2D
 
+@onready var missile_lock_player = AudioStreamPlayer.new()
 @export var speed: float = 200  # Missile speed
 @export var turn_speed: float = 3  # How fast it adjusts course
 @export var target_group: String = "player_units"  # Determines what it locks onto
@@ -33,6 +34,9 @@ func _ready():
 	if target and not is_instance_valid(target):
 		find_target()
 	sprite.play("fly")  # Start flying animation
+	add_child(missile_lock_player)
+	missile_lock_player.stream = preload("res://sound/alert-102266.mp3")
+	missile_lock_player.volume_db = 0  # Reduce missile lock intensity
 
 func _process(delta):
 	find_target()
@@ -62,6 +66,14 @@ func find_target():
 				return a
 			return a if a.global_position.distance_to(global_position) < b.global_position.distance_to(global_position) else b
 		)
+	var other_missiles_playing = get_tree().get_nodes_in_group("missiles").filter(func(missile):
+		return missile.missile_lock_player.playing
+	)
+	#if target and target.is_in_group("player_units") and other_missiles_playing.is_empty():
+		#print("missile lock")
+		#missile_lock_player.play()
+		#await missile_lock_player.finished
+		#missile_lock_player.queue_free()
 
 func move_forward(delta):
 	var forward_direction = Vector2.UP.rotated(rotation)

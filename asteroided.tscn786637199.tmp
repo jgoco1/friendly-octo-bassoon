@@ -1,0 +1,76 @@
+[gd_scene load_steps=7 format=3 uid="uid://eytmojdi7oen"]
+
+[ext_resource type="Script" uid="uid://cg2wjn7mnd5fb" path="res://asteroided.gd" id="1_mcuy4"]
+[ext_resource type="Script" uid="uid://d1vupq78shn54" path="res://Player.gd" id="2_mcuy4"]
+[ext_resource type="SpriteFrames" uid="uid://cyrko2ajhypqg" path="res://xwingv1.tres" id="3_cd1lo"]
+[ext_resource type="Script" uid="uid://bwgbupv3ffq8" path="res://parallax_background.gd" id="4_607w6"]
+[ext_resource type="Texture2D" uid="uid://cvueabnay52r6" path="res://Untitled.png" id="5_cd1lo"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_n5ew4"]
+size = Vector2(65.3332, 64.6666)
+
+[node name="Asteroided" type="Node2D"]
+script = ExtResource("1_mcuy4")
+
+[node name="Player" type="CharacterBody2D" parent="."]
+position = Vector2(5000, 3000)
+script = ExtResource("2_mcuy4")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Player"]
+position = Vector2(1, -0.5)
+scale = Vector2(1.5, 1.5)
+shape = SubResource("RectangleShape2D_n5ew4")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="Player"]
+scale = Vector2(3, 3)
+sprite_frames = ExtResource("3_cd1lo")
+
+[node name="Camera2D" type="Camera2D" parent="Player"]
+zoom = Vector2(0.5, 0.5)
+position_smoothing_speed = 10.0
+rotation_smoothing_speed = 10.0
+
+[node name="CanvasLayer" type="CanvasLayer" parent="Player/Camera2D"]
+
+[node name="HealthBar" type="ProgressBar" parent="Player/Camera2D/CanvasLayer"]
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 30.0
+offset_top = -54.0
+offset_right = 519.0
+offset_bottom = -2.0
+grow_vertical = 0
+
+[node name="Score" type="Label" parent="Player/Camera2D/CanvasLayer"]
+modulate = Color(0, 0, 0, 1)
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 30.0
+offset_top = -90.0
+offset_right = 94.0
+offset_bottom = -67.0
+grow_vertical = 0
+text = "Score:"
+horizontal_alignment = 1
+
+[node name="MissileTimer" type="ProgressBar" parent="Player/Camera2D/CanvasLayer"]
+modulate = Color(0.796078, 0, 0, 1)
+offset_left = 1884.0
+offset_top = 684.0
+offset_right = 1913.0
+offset_bottom = 1078.0
+tooltip_text = "Missile"
+fill_mode = 3
+show_percentage = false
+
+[node name="ParallaxBackground" type="ParallaxBackground" parent="."]
+script = ExtResource("4_607w6")
+
+[node name="ParallaxLayer" type="ParallaxLayer" parent="ParallaxBackground"]
+
+[node name="Sprite2D" type="Sprite2D" parent="ParallaxBackground/ParallaxLayer"]
+scale = Vector2(40, 40)
+texture = ExtResource("5_cd1lo")
+centered = false

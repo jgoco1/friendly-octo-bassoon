@@ -8,7 +8,7 @@ var smoke_rate = 1.0  # Adjust rate for smoke emission
 @onready var sprite = $AnimatedSprite2D  # Ensure this matches the node name in your Enemy scene
 @export var explosion_scene: PackedScene  # Assign your Explosion.tscn in the Inspector
 @export var animation_frames: SpriteFrames  # Assign animation frames in Inspector
-@export var speed: float = 400
+var speed: float = 400
 @export var weapon_scene: PackedScene
 @export var targeting_range: float = 1000
 @export var max_health: int = 100  # Set in Inspector for different enemy types
@@ -44,7 +44,6 @@ func _process(delta):
 	var cross_product = forward_direction.cross(target_direction)
 	# Gradually rotate toward the target direction
 	rotation += rotation_speed * cross_product * delta
-
 
 	# Faster shooting while targeting player
 	if target:
@@ -89,8 +88,6 @@ func setup(config):
 	targeting_range = enemy_config["targeting_range"]
 	health = max_health
 	fire_rate = enemy_config.get("fire_rate", 0.5)  # Default to 0.5 if not set
-
-	
 
 func _ready():
 	add_to_group("enemies")
