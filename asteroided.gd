@@ -9,7 +9,7 @@ var enemy_data = {
 		"weapon_scene": preload("res://bullet.tscn"),
 		"bullet_velocity": 1200,
 		"bullet_damage": 15,
-		"bullet_range": 1200,
+		"bullet_range": 1500,
 		"bullet_explosion_radius": 80,
 		"fire_rate": 1.0, #Time between shots
 		"max_health": 50,
@@ -35,7 +35,7 @@ var enemy_data = {
 		"weapon_scene": preload("res://bullet.tscn"),
 		"bullet_velocity": 1500,
 		"bullet_damage": 15,
-		"bullet_range": 1500,
+		"bullet_range": 2500,
 		"bullet_explosion_radius": 60,
 		"fire_rate": .5,
 		"max_health": 100,
