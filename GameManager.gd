@@ -1,23 +1,23 @@
 extends Node
 var selected_ship_type = "default"  # Default starting selection
 
-
 var player_types = {
 	"Bomber": {
 		"description": "Bomber - Fast top speed but with poor maneuverability and main firepower,
 						it's main strength comes from its ability to fire a volley of missiles often.",
-		"animation_frames": preload("res://interceptor1.tres")
+		"animation_frames": preload("res://Anim_frames/interceptor1.tres")
 	},
 	"Cross_Wing": {
-		"description": "A starfighter",
-		"animation_frames": preload("res://xwingv1.tres")
+		"description": "Jack of all trades - 
+						fast special reload, decent fire-rate, average health, and highly accurate.",
+		"animation_frames": preload("res://Anim_frames/xwingv1.tres")
 	},
 	"Pi_Fighter": {
 		"description": "A highly maneuverable dog-fighter. 
 						Slower top speed but fast acceleration and banking. 
 						Reducing power budget for shields allows greater firepower for main guns, 
 						but the lack of a targetting droid means missiles take longer to recharge.",
-		"animation_frames": preload("res://fighter1.tres")
+		"animation_frames": preload("res://Anim_frames/fighter1.tres")
 	}
 }
 

@@ -50,11 +50,11 @@ var spread = .05
 var player_types = {
 	"Bomber" : {
 		"description": "Interceptor - Well rounded choice",
-		"animation_frames": preload("res://interceptor1.tres"),
+		"animation_frames": preload("res://Anim_frames/interceptor1.tres"),
 		"bullet_scene": preload("res://bullet.tscn"),
 		"missile_scene": preload("res://Missile.tscn"),
-		"collision_scale" : 3,
-		"sprite_scale": 3,
+		"collision_scale" : 4,
+		"sprite_scale": 4,
 		"max_speed": 1300,
 		"rotation_speed": 0.05,
 		"max_bank_angle": 13,
@@ -71,8 +71,8 @@ var player_types = {
 		"bullet_radius": 200
 	},
 	"Cross_Wing" : {
-		"description": "A starfighter",
-		"animation_frames": preload("res://xwingv1.tres"),
+		"description": "Jack of all trades - fast special reload, decent fire-rate, average health, and highly accurate.",
+		"animation_frames": preload("res://Anim_frames/xwingv1.tres"),
 		"bullet_scene": preload("res://bullet.tscn"),
 		"missile_scene": preload("res://Missile.tscn"),
 		"collision_scale" : 3,
@@ -85,10 +85,10 @@ var player_types = {
 		"max_health": 150,
 		"fire_rate": 20,
 		"special_cooldown": 4,
-		"bullet_velocity": 2400,
+		"bullet_velocity": 3000,
 		"bullet_damage": 15,
-		"bullet_range": 2500,
-		"bullet_spread": .1,
+		"bullet_range": 3000,
+		"bullet_spread": .03,
 		"num_spcl" : 1,
 		"bullet_radius": 100
 	},
@@ -97,23 +97,23 @@ var player_types = {
 						Slower top speed but fast acceleration and banking. 
 						Reducing power budget for shields allows greater firepower for main guns, 
 						but the lack of a targetting droid means missiles take longer to recharge.",
-		"animation_frames": preload("res://fighter1.tres"),
+		"animation_frames": preload("res://Anim_frames/fighter1.tres"),
 		"bullet_scene": preload("res://bullet.tscn"),
 		"missile_scene": preload("res://Missile.tscn"),
-		"collision_scale" : 3,
-		"sprite_scale": 3,
-		"max_speed": 700,
-		"rotation_speed": 0.3,
-		"max_bank_angle": 10,
-		"accel": 20,
+		"collision_scale" : 2,
+		"sprite_scale": 2,
+		"max_speed": 7000,
+		"rotation_speed": 0.4,
+		"max_bank_angle": 15,
+		"accel": 25,
 		"drag": 8,
 		"max_health": 100,
-		"fire_rate": 150,
+		"fire_rate": 20,
 		"special_cooldown": 10,
 		"bullet_velocity": 3000,
-		"bullet_damage": 10,
+		"bullet_damage": 20,
 		"bullet_range": 2000,
-		"bullet_spread": .08,
+		"bullet_spread": .1,
 		"num_spcl" : 1,
 		"bullet_radius": 150
 	}
@@ -153,7 +153,7 @@ func _ready():
 		health_bar.modulate = Color(0,1,0,2)
 	add_child(bullet_fire_player)
 	bullet_fire_player.stream = preload("res://sound/laserShoot.wav")
-	bullet_fire_player.volume_db = -1
+	bullet_fire_player.volume_db = 0
 	#
 	#add_child(low_health_player)
 	#low_health_player.stream = preload("res://sound/alert-102266.mp3")
@@ -263,8 +263,8 @@ func shoot():
 	get_parent().add_child(bullet)
 	 # Add bullet to the scene
 	 # Play bullet sound only if it's not already playing
-	#if not bullet_fire_player.playing:
-		#bullet_fire_player.play()
+	if not bullet_fire_player.playing:
+		bullet_fire_player.play()
 
 
 func use_special():

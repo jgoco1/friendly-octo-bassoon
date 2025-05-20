@@ -17,9 +17,9 @@ offset_top = 696.0
 offset_right = 378.0
 offset_bottom = 849.0
 text = "Itsa Game
-Use W to accelerate,
-A and D rotate left or right
-Q and E Strafe left or right
+Use W  or Right Trigger to accelerate,
+A and D or Left Stick to rotate left or right
+Q and E or D-Pad Left/Right to Strafe
 Left click to shoot
 Right click for missile"
 

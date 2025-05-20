@@ -3,7 +3,7 @@ var selected_ship_type = "default"  # Default starting selection
 
 var enemy_data = {
 	"fighter1": {
-		"animation_frames": preload("res://fighter1.tres"),
+		"animation_frames": preload("res://Anim_frames/fighter1.tres"),
 		"speed": 500,
 		"turn_radius": 3, #How quickly fighter turns turns
 		"weapon_scene": preload("res://bullet.tscn"),
@@ -16,7 +16,7 @@ var enemy_data = {
 		"targeting_range" : 1500
 	},
 	"interceptor1": {
-		"animation_frames": preload("res://interceptor1.tres"),
+		"animation_frames": preload("res://Anim_frames/interceptor1.tres"),
 		"speed": 1000,
 		"turn_radius": 1,
 		"weapon_scene": preload("res://Missile.tscn"),
@@ -29,7 +29,7 @@ var enemy_data = {
 		"targeting_range" : 10000
 	},
 	"fighter2": {
-		"animation_frames": preload("res://xwingv1.tres"),
+		"animation_frames": preload("res://Anim_frames/xwingv1.tres"),
 		"speed": 750,
 		"turn_radius": 2,
 		"weapon_scene": preload("res://bullet.tscn"),

@@ -1,6 +1,6 @@
 extends Control
 
-var ship_types = ["Bomber", "Pi_Fighter", "Cross_Wing"]  # List of available ship types
+var ship_types = ["Cross_Wing", "Bomber", "Pi_Fighter"]  # List of available ship types
 var selected_index = 0  # Tracks current selection
 
 @onready var ship_title = $ShipTitleLabel
