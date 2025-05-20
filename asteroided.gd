@@ -92,16 +92,16 @@ func spawn_random_enemy():
 	var enemy = preload("res://enemy.tscn").instantiate()
 	enemy.global_position = spawn_position
 	var rand = randf_range(0,100)
-	print(rand)
+	#print(rand)
 	if rand < 70:
 		enemy.setup(enemy_data["fighter1"])
-		print("Spawned fighter1")
+		#print("Spawned fighter1")
 	elif rand < 90:
 		enemy.setup(enemy_data["fighter2"])
-		print("Spawned fighter2")
+		#print("Spawned fighter2")
 	else:
 		enemy.setup(enemy_data["interceptor1"])
-		print("Spawned interceptor1")
+		#print("Spawned interceptor1")
 	call_deferred("add_child", enemy)
 	
 	

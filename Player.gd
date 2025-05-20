@@ -104,7 +104,7 @@ var player_types = {
 		"collision_scale" : 2,
 		"sprite_scale": 2,
 		"max_speed": 700,
-		"rotation_speed": 0.4,
+		"rotation_speed": 0.2,
 		"max_bank_angle": 15,
 		"accel": 25,
 		"drag": 8,

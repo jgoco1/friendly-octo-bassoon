@@ -10,11 +10,19 @@ var selected_index = 0  # Tracks current selection
 @onready var start_button = $StartButton
 @onready var ship_preview = $ShipPreview  # Reference AnimatedSprite2D
 
+
+@onready var username_label = $UsernameLabel
+@onready var points_label = $TotalPointsLabel
+@onready var logout_button = $LogoutButton
+
 func _ready():
 	update_ship_display()
 	prev_button.connect("pressed", Callable(self, "_on_prev_pressed"))
 	next_button.connect("pressed", Callable(self, "_on_next_pressed"))
 	start_button.connect("pressed", Callable(self, "_on_start_pressed"))
+	username_label.text = "Logged in as: " + GameManager.selected_username
+	points_label.text = "Total Points: " + str(GameManager.total_score)
+	logout_button.connect("pressed", Callable(self, "_on_logout_pressed"))
 
 func _on_prev_pressed():
 	selected_index = (selected_index - 1 + ship_types.size()) % ship_types.size()
@@ -23,6 +31,10 @@ func _on_prev_pressed():
 func _on_next_pressed():
 	selected_index = (selected_index + 1) % ship_types.size()
 	update_ship_display()
+	
+func _on_logout_pressed():
+	GameManager.selected_username = ""
+	get_tree().change_scene_to_file("res://LoginScreen.tscn")
 
 func update_ship_display():
 	var selected_type = ship_types[selected_index]

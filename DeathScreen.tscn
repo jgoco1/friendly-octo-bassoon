@@ -12,6 +12,7 @@ grow_vertical = 2
 script = ExtResource("1_58ct5")
 
 [node name="ColorRect" type="ColorRect" parent="."]
+layout_mode = 0
 offset_left = -38.0
 offset_top = -57.0
 offset_right = 1945.0
@@ -19,6 +20,7 @@ offset_bottom = 1127.0
 color = Color(0, 0, 0, 1)
 
 [node name="ScoreLabel" type="Label" parent="."]
+layout_mode = 0
 offset_left = 934.0
 offset_top = 180.0
 offset_right = 1053.0
@@ -26,6 +28,7 @@ offset_bottom = 203.0
 text = "Lifetime Score: "
 
 [node name="RestartButton" type="Button" parent="."]
+layout_mode = 0
 offset_left = 1091.0
 offset_top = 403.0
 offset_right = 1156.0
@@ -33,6 +36,7 @@ offset_bottom = 434.0
 text = "Restart"
 
 [node name="MenuButton" type="Button" parent="."]
+layout_mode = 0
 offset_left = 832.0
 offset_top = 405.0
 offset_right = 885.0

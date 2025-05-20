@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="ATATsteroids"
-run/main_scene="uid://vlurigur7psw"
+run/main_scene="uid://dhj3pvf7nx0tw"
 config/features=PackedStringArray("4.4", "Forward Plus")
 config/icon="res://icon.svg"
 
