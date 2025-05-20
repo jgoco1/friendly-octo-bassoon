@@ -1,6 +1,4 @@
 extends Area2D
-
-
 #var enemy_points = {"fighter": 100, "interceptor": 200}
 var smoke_timer = 0.0
 var smoke_rate = 1.0  # Adjust rate for smoke emission

@@ -46,7 +46,8 @@ var spread = .05
 ##max_speed, rotation_speed, max_bank_angle, accel, drag
 ##bullet_scene, missile_scene
 ##max_health, fire_rate, special_cooldown, bullet_velocity, bullet_damage, bullet_range, bullet_radius
-
+var sprite_scale = 2 # default scaling
+ 
 var player_types = {
 	"Bomber" : {
 		"description": "Interceptor - Well rounded choice",
@@ -102,7 +103,7 @@ var player_types = {
 		"missile_scene": preload("res://Missile.tscn"),
 		"collision_scale" : 2,
 		"sprite_scale": 2,
-		"max_speed": 7000,
+		"max_speed": 700,
 		"rotation_speed": 0.4,
 		"max_bank_angle": 15,
 		"accel": 25,
@@ -185,7 +186,7 @@ func assign_values(type: String):
 		bullet_scene = config["bullet_scene"]
 		missile_scene = config["missile_scene"]
 
-		var sprite_scale = config.get("sprite_scale", 1.0)
+		sprite_scale = config.get("sprite_scale", 1.0)
 		var collision_scale = config.get("collision_scale", 1.0)
 
 		$AnimatedSprite2D.scale = Vector2(sprite_scale, sprite_scale)
@@ -215,7 +216,7 @@ func _physics_process(delta):
 			$AnimatedSprite2D.play("Forward")
 	else:
 		$AnimatedSprite2D.play("default")
-	score_label.text = "Score: " + str(GameManager.score)
+	score_label.text = "Score: " + str(GameManager.lifetime_score)
 
 func _process(delta):
 	 # Detect mouse wheel movement for zooming
@@ -259,7 +260,7 @@ func shoot():
 	var spawn_offset = Vector2(gun, -120).rotated(rotation) # Adjust the "-40" to change distance
 	gun *= -1
 	# Assign weapon stats dynamically
-	bullet.setup(global_position+spawn_offset,(rotation + randf_range(-spread,spread) ), ((speed*1.5) + bullet_velocity), bullet_damage, bullet_range, bullet_radius)  # Example values
+	bullet.setup(global_position+spawn_offset*sprite_scale,(rotation + randf_range(-spread,spread) ), ((speed*1.5) + bullet_velocity), bullet_damage, bullet_range, bullet_radius)  # Example values
 	get_parent().add_child(bullet)
 	 # Add bullet to the scene
 	 # Play bullet sound only if it's not already playing
@@ -327,4 +328,4 @@ func die():
 	await get_tree().create_timer(.25).timeout  # Delay before returning to menu
 
 	queue_free()  # Remove player from scene
-	GameManager.return_to_menu()
+	GameManager.handle_death()

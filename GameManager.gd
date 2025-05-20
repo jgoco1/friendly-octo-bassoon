@@ -27,7 +27,17 @@ func start_game():
 func return_to_menu():
 	get_tree().change_scene_to_file("res://StartMenu.tscn")
 
-var score: int = 0  # Stores total player points
+var lifetime_score: int = 0  # Holds score before adding to total balance
+var total_score: int = 0
 
 func add_score(amount):
-	score += amount
+	lifetime_score += amount
+	total_score += amount  # Persist score over playthroughs
+	
+	# Introduce a random enemy spawn chance based on score gained
+	var spawn_chance = clamp(amount / 50.0, 0.05, 0.3)  # Scale chance dynamically
+	if randf() < spawn_chance:  
+		get_node("/root/Asteroided").spawn_random_enemy()
+
+func handle_death():
+	get_tree().change_scene_to_file("res://DeathScreen.tscn")  # Transition to death screen
