@@ -15,6 +15,7 @@ var drag = 5 ##How quickly the ship decelerates
 
 @onready var bullet_scene = preload("res://bullet.tscn")
 @onready var missile_scene = preload("res://Missile.tscn")
+var special_slots = []
 @onready var camera = $Camera2D
 var zoom_speed = 2000  # Adjust zoom speed
 var min_zoom = 0.3  # Minimum zoom level (more zoomed in)
@@ -36,7 +37,6 @@ var shooting = false
 var shoot_timer = 0.0
 var special_cooldown = 3
 var special_timer = 0.0
-var num_spcl = 1
 var bullet_velocity = 1600
 var bullet_damage = 20
 var bullet_range = 2000
@@ -53,7 +53,10 @@ var player_types = {
 		"description": "Interceptor - Well rounded choice",
 		"animation_frames": preload("res://Anim_frames/interceptor1.tres"),
 		"bullet_scene": preload("res://bullet.tscn"),
-		"missile_scene": preload("res://Missile.tscn"),
+		"special_scenes": [
+			preload("res://Missile.tscn"),
+			preload("res://Missile.tscn")
+		], #Multiple special slots
 		"collision_scale" : 4,
 		"sprite_scale": 4,
 		"max_speed": 1300,
@@ -68,14 +71,15 @@ var player_types = {
 		"bullet_damage": 20,
 		"bullet_range": 2500,
 		"bullet_spread": .02,
-		"num_spcl" : 2,
 		"bullet_radius": 200
 	},
 	"Cross_Wing" : {
 		"description": "Jack of all trades - fast special reload, decent fire-rate, average health, and highly accurate.",
 		"animation_frames": preload("res://Anim_frames/xwingv1.tres"),
 		"bullet_scene": preload("res://bullet.tscn"),
-		"missile_scene": preload("res://Missile.tscn"),
+		"special_scenes": [
+			preload("res://Missile.tscn")
+		],
 		"collision_scale" : 3,
 		"sprite_scale": 3,
 		"max_speed": 900,
@@ -90,7 +94,6 @@ var player_types = {
 		"bullet_damage": 15,
 		"bullet_range": 3000,
 		"bullet_spread": .03,
-		"num_spcl" : 1,
 		"bullet_radius": 100
 	},
 	"Pi_Fighter" : {
@@ -100,7 +103,9 @@ var player_types = {
 						but the lack of a targetting droid means missiles take longer to recharge.",
 		"animation_frames": preload("res://Anim_frames/fighter1.tres"),
 		"bullet_scene": preload("res://bullet.tscn"),
-		"missile_scene": preload("res://Missile.tscn"),
+		"special_scenes": [
+			preload("res://Missile.tscn")
+		],
 		"collision_scale" : 2,
 		"sprite_scale": 2,
 		"max_speed": 700,
@@ -115,7 +120,6 @@ var player_types = {
 		"bullet_damage": 20,
 		"bullet_range": 2000,
 		"bullet_spread": .1,
-		"num_spcl" : 1,
 		"bullet_radius": 150
 	}
 }
@@ -155,11 +159,6 @@ func _ready():
 	add_child(bullet_fire_player)
 	bullet_fire_player.stream = preload("res://sound/laserShoot.wav")
 	bullet_fire_player.volume_db = 0
-	#
-	#add_child(low_health_player)
-	#low_health_player.stream = preload("res://sound/alert-102266.mp3")
-	#low_health_player.volume_db = -15
-	
 
 func assign_values(type: String):
 	if type in player_types:
@@ -179,12 +178,13 @@ func assign_values(type: String):
 		bullet_range = config["bullet_range"]
 		bullet_radius = config["bullet_radius"]
 		spread = config["bullet_spread"]
-		num_spcl = config["num_spcl"]
 
 		# Assign visuals & weapons
 		$AnimatedSprite2D.frames = config["animation_frames"]
 		bullet_scene = config["bullet_scene"]
-		missile_scene = config["missile_scene"]
+		
+		# Convert single missile storage to multiple specials
+		special_slots = config.get("special_scenes", [])  # Stores multiple special abilities
 
 		sprite_scale = config.get("sprite_scale", 1.0)
 		var collision_scale = config.get("collision_scale", 1.0)
@@ -267,25 +267,24 @@ func shoot():
 	if not bullet_fire_player.playing:
 		bullet_fire_player.play()
 
-
 func use_special():
-	#var num_spcl = player_types[GameManager.selected_ship_type].get("num_spcl", 1)
 	var missile_delay = 0.2  # Delay between missile launches
+	var total_specials = special_slots.size()
 
-	for i in range(num_spcl):
-		await get_tree().create_timer(missile_delay * i).timeout  # Delay per missile
-		launch_special(i, num_spcl)
+	for i in range(total_specials):  # Fire based on array size
+		await get_tree().create_timer(missile_delay * i).timeout
+		launch_special(i, total_specials)
 		
 func launch_special(index, total):
-	var special = missile_scene.instantiate()
+	if index >= special_slots.size():
+		print("No special available for slot:", index)
+		return
 
-	# Offset missiles slightly for variation
+	var special = special_slots[index].instantiate()
 	var offset = Vector2(index * 10 - (total * 5), -100).rotated(rotation)
-
 	special.setup(global_position + offset, rotation, (speed + (bullet_velocity / 1.5)), bullet_damage * 3, bullet_range * 5, bullet_radius)
 	special.target_group = "enemies"
 	special.turn_speed = 5
-
 	get_parent().add_child(special)
 	
 func spawn_damage_effect():
