@@ -79,7 +79,7 @@ func setup(config):
 	bullet_velocity = enemy_config["bullet_velocity"]
 	bullet_damage = enemy_config["bullet_damage"]
 	bullet_range = enemy_config["bullet_range"]
-	bullet_explosion_radius = enemy_config["bullet_explosion_radius"]
+	bullet_explosion_radius = enemy_config["bullet_explosion_radius"] * 3
 
 	# Store health and fire rate values
 	max_health = enemy_config["max_health"]

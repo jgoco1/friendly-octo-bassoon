@@ -257,10 +257,10 @@ func _process(delta):
 func shoot():
 	var bullet = bullet_scene.instantiate()
 	# Offset position so the bullet spawns slightly ahead of the player
-	var spawn_offset = Vector2(gun, -120).rotated(rotation) # Adjust the "-40" to change distance
+	var spawn_offset = Vector2(gun, -40).rotated(rotation) # Adjust the "-40" to change distance
 	gun *= -1
 	# Assign weapon stats dynamically
-	bullet.setup(global_position+spawn_offset*sprite_scale,(rotation + randf_range(-spread,spread) ), ((speed*1.5) + bullet_velocity), bullet_damage, bullet_range, bullet_radius)  # Example values
+	bullet.setup(global_position+(spawn_offset*sprite_scale),(rotation + randf_range(-spread,spread) ), ((speed*1.5) + bullet_velocity), bullet_damage, bullet_range, bullet_radius)  # Example values
 	get_parent().add_child(bullet)
 	 # Add bullet to the scene
 	 # Play bullet sound only if it's not already playing

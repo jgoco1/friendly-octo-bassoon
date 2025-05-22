@@ -10,6 +10,8 @@ var user_profiles = {}  # Dictionary to store user profiles
 func _ready():
 	load_profiles()  # Load existing profiles from JSON
 	login_button.connect("pressed", Callable(self, "_on_login_pressed"))
+	username_field.connect("focus_entered", Callable(self, "_on_username_input_focused"))
+	password_field.connect("focus_entered", Callable(self, "_on_password_input_focused"))
 
 func _on_login_pressed():
 	var username = username_field.text.strip_edges()
@@ -33,6 +35,12 @@ func _on_login_pressed():
 		GameManager.selected_username = username
 		GameManager.total_score = 0
 		get_tree().change_scene_to_file("res://StartMenu.tscn")
+		
+func _on_username_input_focus_entered():
+	username_field.grab_focus()
+
+func _on_password_input_focus_entered():
+	password_field.grab_focus()
 
 func load_profiles():
 	var file = FileAccess.open("user_profiles.json", FileAccess.READ)
