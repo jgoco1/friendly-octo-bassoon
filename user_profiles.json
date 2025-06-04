@@ -1,7 +1,17 @@
 {
+	"": {
+		"date_created": 1747922205.062,
+		"password": "d41d8cd98f00b204e9800998ecf8427e",
+		"points": 8050
+	},
 	"hoier": {
 		"date_created": 1747913960.961,
 		"password": "a68b7c6cfa10435dc31fce0fb003ca5a",
-		"points": 2200
+		"points": 3750.0
+	},
+	"oreagganoo": {
+		"date_created": 1748041550.941,
+		"password": "b0b500541228f65fc99fdfd2f35247ca",
+		"points": 3750.0
 	}
 }

@@ -1,49 +1,9 @@
 extends Node2D
 var selected_ship_type = "default"  # Default starting selection
 
-var enemy_data = {
-	"fighter1": {
-		"animation_frames": preload("res://Anim_frames/fighter1.tres"),
-		"speed": 500,
-		"turn_radius": 3, #How quickly fighter turns turns
-		"weapon_scene": preload("res://bullet.tscn"),
-		"bullet_velocity": 1200,
-		"bullet_damage": 15,
-		"bullet_range": 1500,
-		"bullet_explosion_radius": 80,
-		"fire_rate": 1.0, #Time between shots
-		"max_health": 50,
-		"targeting_range" : 1500
-	},
-	"interceptor1": {
-		"animation_frames": preload("res://Anim_frames/interceptor1.tres"),
-		"speed": 1000,
-		"turn_radius": 1,
-		"weapon_scene": preload("res://Missile.tscn"),
-		"bullet_velocity": 1600,
-		"bullet_damage": 25,
-		"bullet_range": 10000,
-		"bullet_explosion_radius": 160,
-		"fire_rate": 6,
-		"max_health": 300,
-		"targeting_range" : 10000
-	},
-	"fighter2": {
-		"animation_frames": preload("res://Anim_frames/xwingv1.tres"),
-		"speed": 750,
-		"turn_radius": 2,
-		"weapon_scene": preload("res://bullet.tscn"),
-		"bullet_velocity": 1500,
-		"bullet_damage": 15,
-		"bullet_range": 2500,
-		"bullet_explosion_radius": 60,
-		"fire_rate": .5,
-		"max_health": 100,
-		"targeting_range" : 2500
-	}
-}
+#var spawn_area = Rect2(300, 300, 1200, 800)  # Move closer to player view
+var screenSize = Vector2(23720, 17160)
 
-var spawn_area = Rect2(300, 300, 1200, 800)  # Move closer to player view
 var enemy_scene = preload("res://enemy.tscn")
 
 var enemy_count = 0
@@ -55,22 +15,21 @@ func spawn_enemy(type_or_config):
 	var safe_distance = 800  # Minimum distance from player
 	var player_position = get_node("/root/Asteroided/Player").global_position
 	var spawn_position = Vector2.ZERO
+
 	while true:
-		spawn_position = Vector2(randf_range(0, 20000), randf_range(0, 20000))
-		
-		# Ensure enemy spawns outside player's view range
+		spawn_position = Vector2(randf_range(0, screenSize.x), randf_range(0, screenSize.y))
 		if player_position.distance_to(spawn_position) > safe_distance:
 			break  # Valid spawn location found
 
 	var enemy = preload("res://enemy.tscn").instantiate()
 	enemy.global_position = spawn_position
 
-	# Setup enemy depending on whether it's a predefined type or an existing config
-	if type_or_config is String and type_or_config in enemy_data:
-		enemy.setup(enemy_data[type_or_config])  # If it's a type, use predefined config
+	if type_or_config is String and type_or_config in GameManager.enemy_data:
+		enemy.setup(GameManager.enemy_data[type_or_config])  # Pull enemy config from GameManager
 	else:
-		enemy.setup(type_or_config)  # If it's already a full config, just apply it
-	call_deferred("add_child", enemy)  # Defer addition to avoid performance issues
+		enemy.setup(type_or_config)  # Apply external config if provided
+
+	call_deferred("add_child", enemy)
 	
 func spawn_random_enemy():
 	var safe_distance = 1200  # Minimum distance from player
@@ -83,7 +42,7 @@ func spawn_random_enemy():
 	var spawn_position = Vector2.ZERO
 
 	while true:
-		spawn_position = Vector2(randf_range(0, 20000), randf_range(0, 20000))
+		spawn_position = Vector2(randf_range(0, screenSize.x), randf_range(0, screenSize.y))
 		
 		# Ensure enemy spawns outside player's view range
 		if player_position.distance_to(spawn_position) > safe_distance:
@@ -94,14 +53,11 @@ func spawn_random_enemy():
 	var rand = randf_range(0,100)
 	#print(rand)
 	if rand < 70:
-		enemy.setup(enemy_data["fighter1"])
-		#print("Spawned fighter1")
+		enemy.setup(GameManager.enemy_data["fighter1"])
 	elif rand < 90:
-		enemy.setup(enemy_data["fighter2"])
-		#print("Spawned fighter2")
+		enemy.setup(GameManager.enemy_data["fighter2"])
 	else:
-		enemy.setup(enemy_data["interceptor1"])
-		#print("Spawned interceptor1")
+		enemy.setup(GameManager.enemy_data["interceptor1"])
 	call_deferred("add_child", enemy)
 	
 	

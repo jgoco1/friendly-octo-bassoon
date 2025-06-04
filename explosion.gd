@@ -9,7 +9,6 @@ func _ready():
 		sprite.modulate.a = randf_range(0.7, 1.0)  # Randomized transparency
 		sprite.play("explode")
 		sprite.animation_finished.connect(on_animation_finished)
-
 	else:
 		print("Error: ExplodeSprite node not found!")
 

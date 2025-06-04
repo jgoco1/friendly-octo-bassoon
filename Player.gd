@@ -3,6 +3,8 @@ extends CharacterBody2D
 var description:String = "A ship"
 
 const EXPLOSION_SCENE = preload("res://Explosion.tscn")
+const MISSILE_SCENE = preload("res://Missile.tscn")  # Single missile scene
+
 var max_speed = 800 ##Max top speed
 var rotation_speed = 0.2 ## How quickly it turns
 @export var rtc_speed = .1 ##How quickly it returns to going straight
@@ -47,82 +49,6 @@ var spread = .05
 ##bullet_scene, missile_scene
 ##max_health, fire_rate, special_cooldown, bullet_velocity, bullet_damage, bullet_range, bullet_radius
 var sprite_scale = 2 # default scaling
- 
-var player_types = {
-	"Bomber" : {
-		"description": "Interceptor - Well rounded choice",
-		"animation_frames": preload("res://Anim_frames/interceptor1.tres"),
-		"bullet_scene": preload("res://bullet.tscn"),
-		"special_scenes": [
-			preload("res://Missile.tscn"),
-			preload("res://Missile.tscn")
-		], #Multiple special slots
-		"collision_scale" : 4,
-		"sprite_scale": 4,
-		"max_speed": 1300,
-		"rotation_speed": 0.05,
-		"max_bank_angle": 13,
-		"accel":6,
-		"drag": 4,
-		"max_health": 300,
-		"fire_rate": 2,
-		"special_cooldown": 2,
-		"bullet_velocity": 1800,
-		"bullet_damage": 20,
-		"bullet_range": 2500,
-		"bullet_spread": .02,
-		"bullet_radius": 200
-	},
-	"Cross_Wing" : {
-		"description": "Jack of all trades - fast special reload, decent fire-rate, average health, and highly accurate.",
-		"animation_frames": preload("res://Anim_frames/xwingv1.tres"),
-		"bullet_scene": preload("res://bullet.tscn"),
-		"special_scenes": [
-			preload("res://Missile.tscn")
-		],
-		"collision_scale" : 3,
-		"sprite_scale": 3,
-		"max_speed": 900,
-		"rotation_speed": 0.25,
-		"max_bank_angle": 10,
-		"accel": 15,
-		"drag": 6,
-		"max_health": 150,
-		"fire_rate": 20,
-		"special_cooldown": 4,
-		"bullet_velocity": 3000,
-		"bullet_damage": 15,
-		"bullet_range": 3000,
-		"bullet_spread": .03,
-		"bullet_radius": 100
-	},
-	"Pi_Fighter" : {
-		"description": "A highly maneuverable dog-fighter. 
-						Slower top speed but fast acceleration and banking. 
-						Reducing power budget for shields allows greater firepower for main guns, 
-						but the lack of a targetting droid means missiles take longer to recharge.",
-		"animation_frames": preload("res://Anim_frames/fighter1.tres"),
-		"bullet_scene": preload("res://bullet.tscn"),
-		"special_scenes": [
-			preload("res://Missile.tscn")
-		],
-		"collision_scale" : 2,
-		"sprite_scale": 2,
-		"max_speed": 700,
-		"rotation_speed": 0.2,
-		"max_bank_angle": 15,
-		"accel": 25,
-		"drag": 8,
-		"max_health": 100,
-		"fire_rate": 20,
-		"special_cooldown": 10,
-		"bullet_velocity": 3000,
-		"bullet_damage": 20,
-		"bullet_range": 2000,
-		"bullet_spread": .1,
-		"bullet_radius": 150
-	}
-}
 
 func get_input():
 	# Handle rotation controls
@@ -146,12 +72,22 @@ func get_input():
 	velocity = transform.y * speed * -1 + lateral_movement  # Apply independent strafe
 
 func _ready():
+	if GameManager.selected_missiles.size() > 0:
+		print("Assigning missiles")
+		special_slots = GameManager.selected_missiles  # Assign player's missile loadout
+		print(special_slots)
+	else:
+		print("Couldn't find missiles")
+		# Fallback to default missiles from player type
+		var ship_type = GameManager.selected_ship_type
+		special_slots = GameManager.player_types[ship_type].get("special_scenes", [])
+
 	assign_values(GameManager.selected_ship_type)  # Use the selected ship
 	add_to_group("player_units")
 	var display_size = get_viewport_rect().size  # Get current screen resolution
 	var base_zoom = display_size / Vector2(1920, 1080)  # Normalize zoom based on a 1080p reference
 	camera.zoom = .4*base_zoom
-	screenSize = Vector2(20000, 20000)
+	screenSize = Vector2(23720, 17160)
 	if health_bar:
 		health_bar.value = float(health) / float(max_health) * 100
 		health_bar.add_theme_color_override("font_color", Color(0, 0, 0))  # Ensures text stays black
@@ -161,8 +97,8 @@ func _ready():
 	bullet_fire_player.volume_db = 0
 
 func assign_values(type: String):
-	if type in player_types:
-		var config = player_types[type]
+	if type in GameManager.player_types:
+		var config = GameManager.player_types[type]
 		
 		# Assign stats
 		max_speed = config["max_speed"]
@@ -183,8 +119,12 @@ func assign_values(type: String):
 		$AnimatedSprite2D.frames = config["animation_frames"]
 		bullet_scene = config["bullet_scene"]
 		
-		# Convert single missile storage to multiple specials
-		special_slots = config.get("special_scenes", [])  # Stores multiple special abilities
+		# Set missile loadout (prioritizing selected missiles)
+		if GameManager.selected_missiles.size() > 0:
+			special_slots = GameManager.selected_missiles
+		else:
+			special_slots = config.get("special_scenes", [])
+
 
 		sprite_scale = config.get("sprite_scale", 1.0)
 		var collision_scale = config.get("collision_scale", 1.0)
@@ -257,7 +197,7 @@ func _process(delta):
 func shoot():
 	var bullet = bullet_scene.instantiate()
 	# Offset position so the bullet spawns slightly ahead of the player
-	var spawn_offset = Vector2(gun, -40).rotated(rotation) # Adjust the "-40" to change distance
+	var spawn_offset = Vector2(gun, -60).rotated(rotation) # Adjust the "-40" to change distance
 	gun *= -1
 	# Assign weapon stats dynamically
 	bullet.setup(global_position+(spawn_offset*sprite_scale),(rotation + randf_range(-spread,spread) ), ((speed*1.5) + bullet_velocity), bullet_damage, bullet_range, bullet_radius)  # Example values
@@ -273,18 +213,16 @@ func use_special():
 
 	for i in range(total_specials):  # Fire based on array size
 		await get_tree().create_timer(missile_delay * i).timeout
-		launch_special(i, total_specials)
+		launch_special(special_slots[i])
 		
-func launch_special(index, total):
-	if index >= special_slots.size():
-		print("No special available for slot:", index)
-		return
+func launch_special(missile_id):
+	var special = MISSILE_SCENE.instantiate()  # Use the preloaded missile scene
+	special.assign_values(missile_id)  # Missile handles validation internally
 
-	var special = special_slots[index].instantiate()
-	var offset = Vector2(index * 10 - (total * 5), -100).rotated(rotation)
-	special.setup(global_position + offset, rotation, (speed + (bullet_velocity / 1.5)), bullet_damage * 3, bullet_range * 5, bullet_radius)
+	# Offset missiles slightly for variation
+	var offset = Vector2(randf_range(-20, 20), -100).rotated(rotation)
+	special.setup(global_position + offset, rotation, speed + 500, 10, 3000, 200)  # Temporary values before assignment
 	special.target_group = "enemies"
-	special.turn_speed = 5
 	get_parent().add_child(special)
 	
 func spawn_damage_effect():

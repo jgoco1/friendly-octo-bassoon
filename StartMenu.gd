@@ -46,4 +46,4 @@ func update_ship_display():
 
 func _on_start_pressed():
 	GameManager.selected_ship_type = ship_types[selected_index]  # Store selection
-	GameManager.start_game()
+	GameManager.loadout_menu()
