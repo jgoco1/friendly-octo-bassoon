@@ -20,7 +20,7 @@ func assign_values(missile_id):
 	speed = missile_data["speed"]
 	max_range = missile_data["range"]
 	damage = missile_data["damage"]
-	explosion_radius = missile_data["explosion_radius"]
+	explosion_radius = missile_data["explosion_radius"] / 2
 
 	print("Missile assigned:", missile_id, "Stats:", missile_data)
 
@@ -123,7 +123,7 @@ func spawn_smoke():
 func explode():
 	var explosion = preload("res://Explosion.tscn").instantiate()
 	explosion.global_position = global_position
-	explosion.scale *= explosion_radius/70  # Scale up explosion effect
+	explosion.scale *= explosion_radius / 50  # Scale up explosion effect
 	get_parent().add_child(explosion)
 
 	for area in get_tree().get_nodes_in_group("player_units") + get_tree().get_nodes_in_group("enemies"):
