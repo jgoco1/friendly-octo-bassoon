@@ -208,13 +208,13 @@ func load_profiles():
 func add_score(amount):
 	lifetime_score += amount
 	total_score += amount  
-	print(selected_username)
+	#print(selected_username)
 	# Check if username exists before updating
 	if selected_username in user_profiles:
-		print("Updating points for:", selected_username)
-		print("Previous points:", user_profiles[selected_username]["points"])
+		#print("Updating points for:", selected_username)
+		#print("Previous points:", user_profiles[selected_username]["points"])
 		user_profiles[selected_username]["points"] = total_score
-		print("Updated points:", user_profiles[selected_username]["points"])
+		#print("Updated points:", user_profiles[selected_username]["points"])
 		save_profiles()
 	else:
 		print("User not found in profiles!")
@@ -228,7 +228,7 @@ func save_profiles():
 	var json_data = JSON.stringify(user_profiles, "\t")  # Pretty-printing for readability
 	var file = FileAccess.open("user_profiles.json", FileAccess.WRITE)
 	if file:
-		print("Saving profiles:", json_data)  # Debug message to confirm file saving
+		#print("Saving profiles:", json_data)  # Debug message to confirm file saving
 		file.store_string(json_data)
 		file.close()
 	else:

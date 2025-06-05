@@ -1,15 +1,14 @@
 extends Node2D
 var selected_ship_type = "default"  # Default starting selection
 
-#var spawn_area = Rect2(300, 300, 1200, 800)  # Move closer to player view
 var screenSize = Vector2(23720, 17160)
 
 var enemy_scene = preload("res://enemy.tscn")
 
 var enemy_count = 0
-var max_enemies = 20  # Adjust based on desired difficulty
-var respawn_min_time = 2.0  # Minimum respawn delay
-var respawn_max_time = 6.0  # Maximum respawn delay
+var max_enemies = 30  # Adjust based on desired difficulty
+#var respawn_min_time = 2.0  # Minimum respawn delay
+#var respawn_max_time = 6.0  # Maximum respawn delay
 	
 func spawn_enemy(type_or_config):
 	var safe_distance = 800  # Minimum distance from player
