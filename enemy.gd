@@ -13,6 +13,7 @@ var speed: float = 400
 @export var rotation_speed: float = 2  # Speed at which enemies adjust their heading
 var health: int = max_health
 var play_area = Rect2(100, 100, 23720, 17160)  # Define playable space
+var enemy_type = "bomber"
 
 var fire_rate = 0.5  # Reduce cooldown (shoots faster)
 var shoot_timer = 0.0
@@ -24,10 +25,22 @@ var bullet_explosion_radius: float
 var target = null
 var enemy_config
 var wander_target: Vector2 = Vector2.ZERO  # Ensure correct type
+var missile_volley_cooldown = randf_range(5,30)
+var movement_target: Vector2
 
 func _process(delta):
-	find_target()
-	var movement_target: Vector2
+	if (enemy_type == "bomber"):
+		bomber_behavior(delta)
+		missile_volley_cooldown = max(missile_volley_cooldown - delta, 0)
+		if(missile_volley_cooldown <= 1):
+			find_target()
+		else:
+			movement_target = wander_target
+			if global_position.distance_to(wander_target) < 40:
+				set_random_target()
+	else:
+		find_target()
+	
 	if target:
 		movement_target = target.global_position
 	else:
@@ -59,7 +72,7 @@ func _process(delta):
 			smoke_timer = adjusted_smoke_rate  # Reduce interval as health decreases
 
 func set_random_target():
-	var random_offset = Vector2(randf_range(-600, 600), randf_range(-600, 600))  # Natural variation
+	var random_offset = Vector2(randf_range(-15000, 15000), randf_range(-15000, 15000))  # Natural variation
 	var new_position = global_position + random_offset
 
 	# Ensure new position stays within bounds
@@ -74,6 +87,7 @@ func setup(config):
 	speed = enemy_config["speed"]
 	rotation_speed = enemy_config["turn_radius"]
 	weapon_scene = enemy_config["weapon_scene"]
+	enemy_type = enemy_config["enemy_type"]
 
 	# Store bullet-related values
 	bullet_velocity = enemy_config["bullet_velocity"]
@@ -155,3 +169,45 @@ func die():
 	#get_parent().spawn_enemy(enemy_config)  # Respawn same enemy type
 
 	queue_free()  # Fully remove enemy after respawn is scheduled
+	
+	
+	# Called every frame for bomber-specific behavior.
+# Bomber behavior: Only fire a missile volley when cooldown is 0,
+# the enemy is within firing range, and the aim is good.
+func bomber_behavior(delta):
+	if not target:
+		return
+	
+	var desired_direction = (target.global_position - global_position).normalized()
+	var forward_direction = Vector2.UP.rotated(rotation)
+	var angle_difference = forward_direction.angle_to(desired_direction)
+	var aim_threshold = deg_to_rad(5)  # adjust if needed (smaller means stricter aiming)
+	
+	# Only fire if within a reasonable distance (e.g., 80% of targeting range)
+	var distance_to_target = global_position.distance_to(target.global_position)
+	var effective_range = targeting_range * 0.8
+	
+	if missile_volley_cooldown <= 0 and distance_to_target <= effective_range:
+		if abs(angle_difference) < aim_threshold:
+			fire_missile_volley()
+
+# Fires a volley of missiles in rapid succession. The volley only happens when
+# cooldown is 0, then sets a long cooldown.
+
+func fire_missile_volley():
+	# Double-check that we're allowed to fire.
+	if missile_volley_cooldown > 0:
+		return
+	# Fire 3 missiles in a volley with a delay between each.
+	missile_volley_cooldown = 30.0
+	for i in range(3):
+		await get_tree().create_timer(i * 0.5).timeout
+		if weapon_scene:
+			var missile = preload("res://missile.tscn").instantiate()
+			var spawn_offset = Vector2(0, -80).rotated(rotation)
+			missile.global_position = global_position + spawn_offset
+			# Set up missile using a default type for the volley (or you could pull from a preset loadout)
+			missile.setup(global_position + spawn_offset, rotation, speed + 500, 10, 3000, 200)  # Temporary values before assignment
+			missile.assign_values("R-77")
+			get_parent().add_child(missile)
+	# After the volley, set a long reload cooldown (20 seconds here)

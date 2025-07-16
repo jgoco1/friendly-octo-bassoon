@@ -41,11 +41,11 @@ var missile_types = {
 		"description": "A British-built short-range missile optimized for rapid engagement and high-speed interception."
 	},
 	"R-77": { # Russian equivalent of AIM-120
-		"turn_speed": 2,
-		"speed": 3800,
-		"range": 12000,
-		"damage": 45,
-		"explosion_radius": 480,
+		"turn_speed": .5,
+		"speed": 3000,
+		"range": 8000,
+		"damage": 40,
+		"explosion_radius": 320,
 		"description": "A Russian-built radar-guided missile known for its excellent range and strong lethality."
 	},
 	"AIM-54": { # Phoenix, long-range air-to-air missile
@@ -153,20 +153,22 @@ var enemy_data = {
 		"bullet_explosion_radius": 80,
 		"fire_rate": 1.0, #Time between shots
 		"max_health": 50,
-		"targeting_range" : 1500
+		"targeting_range" : 1500,
+		"enemy_type" : "fighter"
 	},
 	"interceptor1": {
 		"animation_frames": preload("res://Anim_frames/interceptor1.tres"),
 		"speed": 1000,
 		"turn_radius": 1,
-		"weapon_scene": preload("res://Missile.tscn"),
+		"weapon_scene": preload("res://bullet.tscn"),
 		"bullet_velocity": 1600,
 		"bullet_damage": 25,
 		"bullet_range": 10000,
 		"bullet_explosion_radius": 160,
 		"fire_rate": 6,
 		"max_health": 300,
-		"targeting_range" : 10000
+		"targeting_range" : 10000,
+		"enemy_type" : "bomber"
 	},
 	"fighter2": {
 		"animation_frames": preload("res://Anim_frames/xwingv1.tres"),
@@ -179,7 +181,8 @@ var enemy_data = {
 		"bullet_explosion_radius": 60,
 		"fire_rate": .5,
 		"max_health": 100,
-		"targeting_range" : 2500
+		"targeting_range" : 2500,
+		"enemy_type" : "fighter"
 	}
 }
 
@@ -208,13 +211,8 @@ func load_profiles():
 func add_score(amount):
 	lifetime_score += amount
 	total_score += amount  
-	#print(selected_username)
-	# Check if username exists before updating
 	if selected_username in user_profiles:
-		#print("Updating points for:", selected_username)
-		#print("Previous points:", user_profiles[selected_username]["points"])
 		user_profiles[selected_username]["points"] = total_score
-		#print("Updated points:", user_profiles[selected_username]["points"])
 		save_profiles()
 	else:
 		print("User not found in profiles!")
@@ -228,7 +226,6 @@ func save_profiles():
 	var json_data = JSON.stringify(user_profiles, "\t")  # Pretty-printing for readability
 	var file = FileAccess.open("user_profiles.json", FileAccess.WRITE)
 	if file:
-		#print("Saving profiles:", json_data)  # Debug message to confirm file saving
 		file.store_string(json_data)
 		file.close()
 	else:

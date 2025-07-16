@@ -127,7 +127,7 @@ func explode():
 	get_parent().add_child(explosion)
 
 	for area in get_tree().get_nodes_in_group("player_units") + get_tree().get_nodes_in_group("enemies"):
-		if !area.has_node("CollisionShape2D"):
+		if !area.has_node("CollisionShape2D") or !area.has_method("take_damage"):
 			continue  # Skip if there's no collision shape
 		
 		var shape_node = area.get_node("CollisionShape2D")

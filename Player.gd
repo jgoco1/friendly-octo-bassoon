@@ -25,6 +25,7 @@ var max_zoom = 500.0  # Maximum zoom level (zoomed out)
 @onready var health_bar = get_node("Camera2D/CanvasLayer/HealthBar")
 @onready var score_label = get_node("Camera2D/CanvasLayer/Score")
 @onready var missile_timer = get_node("Camera2D/CanvasLayer/MissileTimer")
+@onready var flare_timer = get_node("Camera2D/CanvasLayer/ChaffTimer")
 @onready var control = get_node("Camera2D/CanvasLayer/Control")
 var max_health: int = 100
 var health: int = max_health
@@ -39,6 +40,9 @@ var shooting = false
 var shoot_timer = 0.0
 var special_cooldown = 3
 var special_timer = 0.0
+var chaff_cooldown = 3
+var chaff_timer = 0.0
+var special_2_count = 6
 var bullet_velocity = 1600
 var bullet_damage = 20
 var bullet_range = 2000
@@ -125,7 +129,6 @@ func assign_values(type: String):
 		else:
 			special_slots = config.get("special_scenes", [])
 
-
 		sprite_scale = config.get("sprite_scale", 1.0)
 		var collision_scale = config.get("collision_scale", 1.0)
 
@@ -167,7 +170,6 @@ func _process(delta):
 	if scroll_down:
 		camera.zoom = (camera.zoom + Vector2(0.1, 0.1)).clamp(Vector2(min_zoom, min_zoom), Vector2(max_zoom, max_zoom))
 
-
 	if Input.is_action_pressed("shoot"):
 		shooting = true
 		#bullet_fire_player.playing = true
@@ -185,8 +187,17 @@ func _process(delta):
 			use_special()
 	else:
 		special_timer -= delta
+		
+	if (chaff_timer <= 0):
+		if(Input.is_action_pressed("special_2")):
+			chaff_timer += chaff_cooldown
+			deploy_countermeasures(special_2_count)
+	else:
+		chaff_timer -= delta
 	if missile_timer:
 		missile_timer.value = float(special_timer) / float(special_cooldown) * 100
+	if flare_timer:
+		flare_timer.value = float(chaff_timer) / float(chaff_cooldown) * 100
 		
 	if health < max_health:
 		var damage_level = 1.0 - float(health) / float(max_health)  # Determines severity
@@ -217,14 +228,25 @@ func use_special():
 		
 func launch_special(missile_id):
 	var special = MISSILE_SCENE.instantiate()  # Use the preloaded missile scene
-	special.assign_values(missile_id)  # Missile handles validation internally
-
 	# Offset missiles slightly for variation
 	var offset = Vector2(randf_range(-20, 20), -100).rotated(rotation)
+	#func setup(start_pos, angle, velocity, dmg, m_range, m_explosion_radius):
 	special.setup(global_position + offset, rotation, speed + 500, 10, 3000, 200)  # Temporary values before assignment
+	special.assign_values(missile_id)  # Missile handles validation internally
 	special.target_group = "enemies"
 	get_parent().add_child(special)
 	
+func deploy_countermeasures(amount: int):
+	for i in range(amount):
+		var cm = preload("res://Countermeasure.tscn").instantiate()
+		var offset = Vector2(randf_range(-50, 50), randf_range(-50, 50))
+		cm.global_position = global_position + offset
+		cm.effective_time = 3.5
+		cm.initial_size = 1.8
+		cm.fade_rate = 1.0
+		cm.add_to_group("player_units")  # or "enemies"
+		get_parent().add_child(cm)
+		
 func spawn_damage_effect():
 	var explosion = EXPLOSION_SCENE.instantiate()
 	# Randomize position and scale

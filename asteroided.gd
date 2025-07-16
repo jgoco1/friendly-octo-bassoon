@@ -59,7 +59,6 @@ func spawn_random_enemy():
 		enemy.setup(GameManager.enemy_data["interceptor1"])
 	call_deferred("add_child", enemy)
 	
-	
 func _ready():
 	for i in range(max_enemies):  # Spawn 10 enemies
 		spawn_random_enemy()

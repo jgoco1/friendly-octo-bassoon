@@ -45,6 +45,8 @@ func explode():
 	
 	for area in get_tree().get_nodes_in_group("enemies") + get_tree().get_nodes_in_group("player_units"):
 		if area.global_position.distance_to(global_position) <= explosion_radius:
-			area.take_damage(damage)
+			if area.has_method("take_damage"):
+				area.take_damage(damage)
+
 
 	queue_free()  # Destroy bullet after explosion

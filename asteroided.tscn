@@ -164,6 +164,19 @@ offset_bottom = -205.0
 grow_vertical = 0
 text = "E"
 
+[node name="ChaffTimer" type="ProgressBar" parent="Player/Camera2D/CanvasLayer"]
+modulate = Color(0.250318, 0.280806, 1, 1)
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 1400.0
+offset_top = -1060.0
+offset_right = 1900.0
+offset_bottom = -1035.0
+grow_vertical = 0
+tooltip_text = "Missile"
+show_percentage = false
+
 [node name="ParallaxBackground" type="ParallaxBackground" parent="."]
 script = ExtResource("4_607w6")
 
